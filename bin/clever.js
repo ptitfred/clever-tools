@@ -113,6 +113,8 @@ function run () {
       },
     }),
     configurationValue: cliparse.argument('configuration-value', { description: 'The new value of the configuration' }),
+    tardisAppNameWarp10: cliparse.argument('app-name', { description: 'Warp10 application name for TARDIS' }),
+    tardisTokenNameWarp10: cliparse.argument('token-id', { description: 'Warp10 token ID for TARDIS' }),
   };
 
   // OPTIONS
@@ -365,6 +367,18 @@ function run () {
     confirmTcpRedirCreation: cliparse.flag('yes', {
       aliases: ['y'],
       description: 'Skip confirmation even if the TCP redirection is not free',
+    }),
+    tardisTTL: cliparse.option('ttl', {
+      aliases: ['t'],
+      description: 'Token time to live (expect format to be as PXd, PTXh or PTXm with X beeing a number)'
+    }),
+    tardisProperties: cliparse.option('properties', {
+      aliases: ['p'],
+      description: 'Custom token properties (will be mapped as series labels to reduce user rights)'
+    }),
+    tardisWithoutTokens: cliparse.flag('without-tokens', {
+      aliases: ['w'],
+      description: 'Create a Warp10 application without tokens'
     }),
   };
 
@@ -702,6 +716,78 @@ function run () {
     options: [opts.alias],
   }, stop('stop'));
 
+  // TARDIS COMMAND
+  const tardis = lazyRequirePromiseModule('../src/commands/tardis.js');
+
+  // TARDIS TOKENS COMMANDS
+  const tardisCommandApplicationTokens = cliparse.command('list', {
+    description: 'Display all tokens of a Warp10 application ',
+    args: [args.tardisAppNameWarp10],
+  }, tardis('applicationTokens'));
+  const tardisCommandApplicationTokenGet = cliparse.command('get', {
+    description: 'Display a tardis token of a Warp10 application ',
+    args: [args.tardisTokenNameWarp10],
+  }, tardis('getTokenInfo'));
+  const tardisCommandApplicationReadTokenCreate = cliparse.command('create-read', {
+    description: 'Create a tardis token for a Warp10 application ',
+    args: [args.tardisAppNameWarp10],
+    options: [opts.tardisTTL, opts.tardisProperties],
+  }, tardis('createReadToken'));
+  const tardisCommandApplicationWriteTokenCreate = cliparse.command('create-write', {
+    description: 'Create a tardis token for a Warp10 application ',
+    args: [args.tardisAppNameWarp10],
+    options: [opts.tardisTTL, opts.tardisProperties],
+  }, tardis('createWriteToken'));
+
+  const tardisCommandToken = cliparse.command('token', {
+    description: 'Handle tardis tokens for a Warp10 application',
+    args: [],
+    commands: [
+      tardisCommandApplicationTokens,
+      tardisCommandApplicationTokenGet,
+      tardisCommandApplicationReadTokenCreate,
+      tardisCommandApplicationWriteTokenCreate,
+    ],
+  });
+
+  // TARDIS APPLICATIONS COMMANDS
+  const tardisCommandApplicationCreate = cliparse.command('create', {
+    description: 'Create a new tardis Warp10 application',
+    args: [],
+    options: [opts.tardisTTL, opts.tardisWithoutTokens],
+  }, tardis('createApplication'));
+  const tardisCommandApplicationList = cliparse.command('list', {
+    description: 'List all tardis Warp10 applications',
+    args: [],
+  }, tardis('applications'));
+  const tardisCommandApplicationDelete = cliparse.command('delete', {
+    description: 'Delete a tardis Warp10 application',
+    args: [args.tardisAppNameWarp10],
+  }, tardis('deleteApplication'));
+  const tardisCommandApplicationGet = cliparse.command('info', {
+    description: 'Display a tardis Warp10 application',
+    args: [args.tardisAppNameWarp10],
+  }, tardis('applicationInfo'));
+
+  const tardisCommandApplications = cliparse.command('warp10', {
+    description: 'Handle tardis Warp10 applications',
+    args: [],
+    options: [opts.orgaIdOrName],
+    commands: [
+      tardisCommandApplicationCreate, 
+      tardisCommandApplicationList,
+      tardisCommandApplicationDelete,
+      tardisCommandApplicationGet,
+      tardisCommandToken,
+    ],
+  });
+
+  const tardisCommand = cliparse.command('tardis', {
+    description: 'Display tardis',
+    args: [],
+    commands: [tardisCommandApplications],
+  });
+
   // TCP-REDIRS COMMAND
   const tcpRedirs = lazyRequirePromiseModule('../src/commands/tcp-redirs.js');
   const tcpRedirsListNamespacesCommand = cliparse.command('list-namespaces', {
@@ -790,6 +876,7 @@ function run () {
       sshCommand,
       statusCommand,
       stopCommand,
+      tardisCommand,
       tcpRedirsCommands,
       versionCommand,
       webhooksCommand,
