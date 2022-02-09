@@ -6,6 +6,8 @@ const { conf, loadOAuthConf } = require('../models/configuration.js');
 const { execWarpscript } = require('@clevercloud/client/cjs/request-warp10.superagent.js');
 const { prefixUrl } = require('@clevercloud/client/cjs/prefix-url.js');
 const { request } = require('@clevercloud/client/cjs/request.superagent.js');
+const pkg = require('../../package.json');
+const os = require('os');
 
 async function loadTokens () {
   const tokens = await loadOAuthConf();
@@ -23,8 +25,20 @@ async function sendToApi (requestParams) {
     .then(prefixUrl(conf.API_HOST))
     .then(addOauthHeader(tokens))
     .then((requestParams) => {
+      return {
+        ...requestParams,
+        headers: {
+          ...requestParams.headers,
+          'cc-tools-command': process.cleverToolsCommandHeader,
+          'cc-tools-version': pkg.version,
+          'cc-node-version': process.version,
+          'cc-os': os.platform(),
+        },
+      };
+    })
+    .then((requestParams) => {
       if (process.env.CLEVER_VERBOSE) {
-        Logger.debug(`${requestParams.method.toUpperCase()} ${requestParams.url} ? ${JSON.stringify(requestParams.queryParams)}`);
+        Logger.debug(`${requestParams.method.toUpperCase()} ${requestParams.url} ? ${JSON.stringify(requestParams.queryParams)} ${JSON.stringify(requestParams.headers)}`);
       }
       return requestParams;
     })

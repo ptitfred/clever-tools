@@ -753,6 +753,19 @@ function run () {
     commands: [addWebhookCommand, removeWebhookCommand],
   }, webhooks('list'));
 
+  function wrapCommand (command, previousCommandNames = []) {
+    const rawAction = command.action;
+    const wrappedAction = (...args) => {
+      const cleverToolsCommandHeader = [...previousCommandNames, command.name].join(' ');
+      // console.log('COMMAND', cleverToolsCommandHeader);
+      process.cleverToolsCommandHeader = cleverToolsCommandHeader;
+      return rawAction(...args);
+    };
+    command.commands = command.commands.map((c) => wrapCommand(c, [...previousCommandNames, command.name]));
+    command.action = wrappedAction;
+    return command;
+  }
+
   // CLI PARSER
   const cliParser = cliparse.cli({
     name: 'clever',
@@ -793,7 +806,9 @@ function run () {
       tcpRedirsCommands,
       versionCommand,
       webhooksCommand,
-    ],
+    ].map((command) => {
+      return wrapCommand(command);
+    }),
   });
 
   // Make sure argv[0] is always "node"
