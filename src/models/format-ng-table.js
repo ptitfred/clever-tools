@@ -7,7 +7,7 @@ const AppConfig = require('./app_configuration.js');
 const Logger = require('../logger.js');
 const Formatter = require('./format-string.js');
 
-function printSeparator (columnLengths) {
+function printSeparator(columnLengths) {
   Logger.println('─'.repeat(columnLengths.reduce((a, b) => a + b + 2)));
 }
 
@@ -20,7 +20,7 @@ const networkGroupsTableColumnLengths = [
   48, /* description */
 ];
 const formatNetworkGroupsTable = formatNgTable(networkGroupsTableColumnLengths);
-function formatNetworkGroupsLine (ng) {
+function formatNetworkGroupsLine(ng) {
   return formatNetworkGroupsTable([
     [
       Formatter.formatId(ng.id),
@@ -31,7 +31,7 @@ function formatNetworkGroupsLine (ng) {
     ],
   ]);
 };
-function printNetworkGroupsTableHeader () {
+function printNetworkGroupsTableHeader() {
   Logger.println(colors.bold(formatNetworkGroupsTable([
     ['Network Group ID', 'Label', 'Members', 'Peers', 'Description'],
   ])));
@@ -45,7 +45,7 @@ const membersTableColumnLengths = [
   24, /* domain-name length */
 ];
 const formatMembersTable = formatNgTable(membersTableColumnLengths);
-async function formatMembersLine (member, showAliases = false) {
+async function formatMembersLine(member, showAliases = false) {
   return formatMembersTable([
     [
       showAliases
@@ -57,7 +57,7 @@ async function formatMembersLine (member, showAliases = false) {
     ],
   ]);
 };
-async function printMembersTableHeader (naturalName = false) {
+async function printMembersTableHeader(naturalName = false) {
   Logger.println(colors.bold(formatMembersTable([
     [
       naturalName ? 'Member' : 'Member ID',
@@ -78,7 +78,7 @@ const peersTableColumnLengths = [
   15, /* ip */
 ];
 const formatPeersTable = formatNgTable(peersTableColumnLengths);
-function formatPeersLine (peer) {
+function formatPeersLine(peer) {
   const ip = (peer.endpoint.type === 'ServerEndpoint') ? peer.endpoint.ng_term.ip : peer.endpoint.ng_ip;
   return formatPeersTable([
     [
@@ -91,7 +91,7 @@ function formatPeersLine (peer) {
     ],
   ]);
 };
-function printPeersTableHeader () {
+function printPeersTableHeader() {
   Logger.println(colors.bold(formatPeersTable([
     [
       'Peer ID',
