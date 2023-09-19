@@ -1,5 +1,5 @@
-import cfg from './config';
-import { exec } from './utils';
+import * as cfg from './config.js';
+import { exec } from './utils.js';
 
 async function run () {
   const isStableVersion = cfg.isStableVersion();

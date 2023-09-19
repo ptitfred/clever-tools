@@ -1,4 +1,4 @@
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 import _ from 'lodash';
 import childProcess from 'child_process';
 import fs from 'fs-extra';

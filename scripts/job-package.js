@@ -1,9 +1,9 @@
-import cfg from './config';
+import * as cfg from './config.js';
 import crypto from 'crypto';
 import del from 'del';
 import fs from 'fs-extra';
 import path from 'path';
-import { startTask, endTask, exec, applyTemplates, writeStringToFile } from './utils';
+import { startTask, endTask, exec, applyTemplates, writeStringToFile } from './utils.js';
 
 async function run () {
 

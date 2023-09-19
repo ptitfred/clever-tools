@@ -1,5 +1,5 @@
-import cfg from './config';
-import { cloneGitProject, applyTemplates, tagAndPush, commitAndPush } from './utils';
+import * as cfg from './config.js';
+import { cloneGitProject, applyTemplates, tagAndPush, commitAndPush } from './utils.js';
 
 async function run () {
 

@@ -1,19 +1,19 @@
 import os from 'os';
-import pkgJson from '../package.json';
+import pkgJson from '../package.json' assert { type: 'json'};
 import semver from 'semver';
 
-const archList = ['linux', 'macos', 'win'];
-const nodeVersion = pkgJson['pkg-node-version'];
-const releasesDir = 'releases';
-const cellar = {
+export const archList = ['linux', 'macos', 'win'];
+export const nodeVersion = pkgJson['pkg-node-version'];
+export const releasesDir = 'releases';
+export const cellar = {
   host: 'cellar-c2.services.clever-cloud.com',
   bucket: 'clever-tools.clever-cloud.com',
 };
-const git = {
+export const git = {
   email: 'ci@clever-cloud.com',
   name: 'Clever Cloud CI',
 };
-const appInfos = {
+export const appInfos = {
   name: pkgJson.name,
   vendor: 'Clever Cloud',
   url: pkgJson.homepage,

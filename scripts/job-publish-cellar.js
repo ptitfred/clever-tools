@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import cfg from './config';
+import * as cfg from './config.js';
 import fs from 'fs-extra';
 
 async function run () {
