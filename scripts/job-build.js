@@ -15,7 +15,7 @@ async function run () {
   for (const arch of archList) {
     startTask(`Building pkg for ${arch}`);
     const filepath = cfg.getBinaryFilepath(arch, version);
-    await pkg.exec(['.', '-t', `node${nodeVersion}-${arch}`, '-o', filepath]);
+    await pkg.exec(['dist/clever.js', '-t', `node${nodeVersion}-${arch}`, '-o', filepath]);
     if (isStableVersion) {
       const latestFilepath = cfg.getBinaryFilepath(arch, 'latest');
       await fs.copy(filepath, latestFilepath);

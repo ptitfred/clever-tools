@@ -53,6 +53,9 @@
     "xdg": "^0.1.1"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.4",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.2.1",
     "aws-sdk": "^2.919.0",
     "chai": "^4.3.4",
     "del": "^6.0.0",
@@ -70,9 +73,11 @@
     "grunt-mocha-test": "^0.13.3",
     "mocha": "^8.4.0",
     "pkg": "^5.8.1",
+    "rollup": "^3.29.2",
     "semver": "^7.3.5"
   },
   "scripts": {
+    "build": "rollup -c rollup.config.js",
     "pretest": "npm run lint",
     "test": "grunt test",
     "lint": "eslint bin src scripts",

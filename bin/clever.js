@@ -96,6 +96,7 @@ import * as unlink from '../src/commands/unlink.js';
 import * as version from '../src/commands/version.js';
 import * as webhooks from '../src/commands/webhooks.js';
 import * as database from '../src/commands/database.js';
+import { curl } from '../src/commands/curl.js';
 
 function run () {
 
@@ -582,7 +583,7 @@ function run () {
     description: 'Delete an addon',
     args: [args.addonIdOrName],
     options: [opts.confirmAddonDeletion],
-  }, addon.delete);
+  }, addon.deleteAddon);
   const addonRenameCommand = cliparse.command('rename', {
     description: 'Rename an addon',
     args: [args.addonIdOrName, args.addonName],
@@ -1078,7 +1079,7 @@ function run () {
 // Right now, this is the only way to do this properly
 // cliparse doesn't allow unknown options/arguments
 if (process.argv[2] === 'curl') {
-  require('../src/commands/curl.js').curl();
+  curl();
 }
 else {
   run();
