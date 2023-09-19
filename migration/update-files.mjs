@@ -47,7 +47,7 @@ function trimEnd (code) {
     .trimEnd() + '\n';
 }
 
-function replaceRequiresWithImports (code) {
+function convertFromCjsToEsm (code) {
 
   const ast = parse(code);
   const ms = new MagicString(code);
@@ -113,21 +113,19 @@ async function run () {
     'bin/*.js',
     'scripts/**/*.js',
     'src/**/*.js',
-    // 'src/commands/accesslogs.js',
-    // 'src/commands/env.js',
+    '!src/commands/networkgroups/commands.js',
   ]);
-  // console.log(`${fileList.length} files`);
 
   for (const file of fileList) {
 
-    // const newFile = file.replace(/\.js$/, '.mjs');
     const newFile = file;
+    // .replace(/\.js$/, '.mjs');
     console.log(file);
 
     const code = fs.readFileSync(file, { encoding: 'utf8' });
     const codeWithoutUseStrict = removeUseStrict(code);
-    const codeWithImports = replaceRequiresWithImports(codeWithoutUseStrict);
-    const codeWithCleanEnd = trimEnd(codeWithImports);
+    const esmCode = convertFromCjsToEsm(codeWithoutUseStrict);
+    const codeWithCleanEnd = trimEnd(esmCode);
 
     fs.writeFileSync(newFile, codeWithCleanEnd);
   }
