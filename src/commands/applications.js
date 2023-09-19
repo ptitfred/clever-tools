@@ -1,11 +1,9 @@
-'use strict';
+import colors from 'colors/safe';
 
-const colors = require('colors/safe');
+import AppConfig from '../models/app_configuration.js';
+import Logger from '../logger.js';
 
-const AppConfig = require('../models/app_configuration.js');
-const Logger = require('../logger.js');
-
-async function list (params) {
+export async function list (params) {
   const { 'only-aliases': onlyAliases, json } = params.options;
 
   const { apps } = await AppConfig.loadApplicationConf();
@@ -39,5 +37,3 @@ function formatApps (apps, onlyAliases, json) {
     }
   }
 }
-
-module.exports = { list };

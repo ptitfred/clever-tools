@@ -1,9 +1,7 @@
-'use strict';
-
-const { parseCurlCommand } = require('curlconverter/util.js');
-const { spawn } = require('child_process');
-const { loadOAuthConf, conf } = require('../models/configuration.js');
-const { addOauthHeader } = require('@clevercloud/client/cjs/oauth.node.js');
+import { parseCurlCommand } from 'curlconverter/util.js';
+import { spawn } from 'child_process';
+import { loadOAuthConf, conf } from '../models/configuration.js';
+import { addOauthHeader } from '@clevercloud/client/cjs/oauth.node.js';
 
 async function loadTokens () {
   const tokens = await loadOAuthConf();
@@ -15,7 +13,7 @@ async function loadTokens () {
   };
 }
 
-async function curl () {
+export async function curl () {
 
   // We have to add single quotes on values for the parser
   const curlString = process.argv
@@ -47,5 +45,3 @@ async function curl () {
   spawn('curl', curlParams, { stdio: 'inherit' });
 
 }
-
-module.exports = { curl };

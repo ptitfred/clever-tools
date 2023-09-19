@@ -1,9 +1,7 @@
-'use strict';
-
-const cfg = require('./config');
-const fs = require('fs-extra');
-const https = require('https');
-const path = require('path');
+import cfg from './config';
+import fs from 'fs-extra';
+import https from 'https';
+import path from 'path';
 
 async function run () {
 

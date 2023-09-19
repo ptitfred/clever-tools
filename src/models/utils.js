@@ -1,5 +1,3 @@
-'use strict';
-
 // Inspirations:
 // https://github.com/sindresorhus/p-defer/blob/master/index.js
 // https://github.com/ljharb/promise-deferred/blob/master/index.js
@@ -14,5 +12,3 @@ class Deferred {
     });
   }
 }
-
-module.exports = { Deferred };

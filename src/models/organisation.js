@@ -1,15 +1,13 @@
-'use strict';
-
-const _ = require('lodash');
+import _ from 'lodash';
 const autocomplete = require('cliparse').autocomplete;
 
-const AppConfig = require('./app_configuration.js');
+import AppConfig from './app_configuration.js';
 
-const organisation = require('@clevercloud/client/cjs/api/v2/organisation.js');
-const { getSummary } = require('@clevercloud/client/cjs/api/v2/user.js');
-const { sendToApi } = require('../models/send-to-api.js');
+import organisation from '@clevercloud/client/cjs/api/v2/organisation.js';
+import { getSummary } from '@clevercloud/client/cjs/api/v2/user.js';
+import { sendToApi } from '../models/send-to-api.js';
 
-async function getId (orgaIdOrName) {
+export async function getId (orgaIdOrName) {
   if (orgaIdOrName == null) {
     return null;
   }
@@ -37,22 +35,16 @@ async function getByName (name) {
   return filteredOrgs[0];
 }
 
-async function getNamespaces (params) {
+export async function getNamespaces (params) {
   const { alias } = params.options;
   const { ownerId } = await AppConfig.getAppDetails({ alias });
 
   return organisation.getNamespaces({ id: ownerId }).then(sendToApi);
 }
 
-function completeNamespaces () {
+export function completeNamespaces () {
   // Sadly we do not have access to current params in complete as of now
   const params = { options: {} };
 
   return getNamespaces(params).then(autocomplete.words);
-};
-
-module.exports = {
-  getId,
-  getNamespaces,
-  completeNamespaces,
 };

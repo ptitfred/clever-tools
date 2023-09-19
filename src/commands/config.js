@@ -1,14 +1,12 @@
-'use strict';
+import application from '@clevercloud/client/cjs/api/v2/application.js';
 
-const application = require('@clevercloud/client/cjs/api/v2/application.js');
+import AppConfig from '../models/app_configuration.js';
+import Application from '../models/application.js';
+import ApplicationConfiguration from '../models/application_configuration.js';
 
-const AppConfig = require('../models/app_configuration.js');
-const Application = require('../models/application.js');
-const ApplicationConfiguration = require('../models/application_configuration.js');
+import { sendToApi } from '../models/send-to-api.js';
 
-const { sendToApi } = require('../models/send-to-api.js');
-
-async function get (params) {
+export async function get (params) {
   const [configurationName] = params.args;
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
@@ -22,7 +20,7 @@ async function get (params) {
   }
 }
 
-async function set (params) {
+export async function set (params) {
   const [configurationName, configurationValue] = params.args;
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
@@ -35,7 +33,7 @@ async function set (params) {
   }
 }
 
-async function update (params) {
+export async function update (params) {
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
   const options = ApplicationConfiguration.parseOptions(params.options);
@@ -50,5 +48,3 @@ async function update (params) {
     ApplicationConfiguration.printByName(app, configName);
   }
 }
-
-module.exports = { get, set, update };

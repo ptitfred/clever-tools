@@ -1,11 +1,9 @@
-'use strict';
+import AppConfig from '../models/app_configuration.js';
+import { createDrainBody } from '../models/drain.js';
+import Logger from '../logger.js';
 
-const AppConfig = require('../models/app_configuration.js');
-const { createDrainBody } = require('../models/drain.js');
-const Logger = require('../logger.js');
-
-const { getDrains, createDrain, deleteDrain, updateDrainState } = require('@clevercloud/client/cjs/api/v2/log.js');
-const { sendToApi } = require('../models/send-to-api.js');
+import { getDrains, createDrain, deleteDrain, updateDrainState } from '@clevercloud/client/cjs/api/v2/log.js';
+import { sendToApi } from '../models/send-to-api.js';
 
 // TODO: This could be useful in other commands
 async function getAppOrAddonId ({ alias, addonId }) {
@@ -14,7 +12,7 @@ async function getAppOrAddonId ({ alias, addonId }) {
     : AppConfig.getAppDetails({ alias }).then(({ appId }) => appId);
 }
 
-async function list (params) {
+export async function list (params) {
   const { alias, addon: addonId } = params.options;
 
   const appIdOrAddonId = await getAppOrAddonId({ alias, addonId });
@@ -30,7 +28,7 @@ async function list (params) {
   });
 }
 
-async function create (params) {
+export async function create (params) {
   const [drainTargetType, drainTargetURL] = params.args;
   const { alias, addon: addonId, username, password, 'api-key': apiKey } = params.options;
   const drainTargetCredentials = { username, password };
@@ -43,7 +41,7 @@ async function create (params) {
   Logger.println('Your drain has been successfully saved');
 }
 
-async function rm (params) {
+export async function rm (params) {
   const [drainId] = params.args;
   const { alias, addon: addonId } = params.options;
 
@@ -53,7 +51,7 @@ async function rm (params) {
   Logger.println('Your drain has been successfully removed');
 }
 
-async function enable (params) {
+export async function enable (params) {
   const [drainId] = params.args;
   const { alias, addon: addonId } = params.options;
 
@@ -63,7 +61,7 @@ async function enable (params) {
   Logger.println('Your drain has been enabled');
 }
 
-async function disable (params) {
+export async function disable (params) {
   const [drainId] = params.args;
   const { alias, addon: addonId } = params.options;
 
@@ -72,11 +70,3 @@ async function disable (params) {
 
   Logger.println('Your drain has been disabled');
 }
-
-module.exports = {
-  list,
-  create,
-  rm,
-  enable,
-  disable,
-};

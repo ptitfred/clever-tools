@@ -12,16 +12,16 @@ if (process.argv.includes('--autocomplete-index')) {
   process.env.CLEVER_QUIET = '1';
 }
 
-const cliparse = require('cliparse');
-const cliparseCommands = require('cliparse/src/command.js');
-const updateNotifier = require('update-notifier');
-const _sortBy = require('lodash/sortBy.js');
+import cliparse from 'cliparse';
+import cliparseCommands from 'cliparse/src/command.js';
+import updateNotifier from 'update-notifier';
+import _sortBy from 'lodash/sortBy.js';
 
-const git = require('../src/models/git.js');
-const Parsers = require('../src/parsers.js');
-const handleCommandPromise = require('../src/command-promise-handler.js');
-const Formatter = require('../src/models/format-string.js');
-const { getOutputFormatOption } = require('../src/get-output-format-option.js');
+import git from '../src/models/git.js';
+import Parsers from '../src/parsers.js';
+import handleCommandPromise from '../src/command-promise-handler.js';
+import Formatter from '../src/models/format-string.js';
+import { getOutputFormatOption } from '../src/get-output-format-option.js';
 
 // Exit cleanly if the program we pipe to exits abruptly
 process.stdout.on('error', (error) => {
@@ -30,7 +30,7 @@ process.stdout.on('error', (error) => {
   }
 });
 
-const pkg = require('../package.json');
+import pkg from '../package.json';
 
 if (process.pkg == null) {
   updateNotifier({
@@ -54,13 +54,13 @@ cliparse.command = function (name, options, cb) {
   });
 };
 
-const Addon = require('../src/models/addon.js');
-const Application = require('../src/models/application.js');
-const ApplicationConfiguration = require('../src/models/application_configuration.js');
-const Drain = require('../src/models/drain.js');
-const Notification = require('../src/models/notification.js');
-const Organisation = require('../src/models/organisation.js');
-const NetworkGroup = require('../src/models/networkgroup.js');
+import Addon from '../src/models/addon.js';
+import Application from '../src/models/application.js';
+import ApplicationConfiguration from '../src/models/application_configuration.js';
+import Drain from '../src/models/drain.js';
+import Notification from '../src/models/notification.js';
+import Organisation from '../src/models/organisation.js';
+import NetworkGroup from '../src/models/networkgroup.js';
 
 function run () {
 

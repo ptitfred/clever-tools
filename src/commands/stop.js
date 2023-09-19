@@ -1,16 +1,12 @@
-'use strict';
+import AppConfig from '../models/app_configuration.js';
+import application from '@clevercloud/client/cjs/api/v2/application.js';
+import Logger from '../logger.js';
+import { sendToApi } from '../models/send-to-api.js';
 
-const AppConfig = require('../models/app_configuration.js');
-const application = require('@clevercloud/client/cjs/api/v2/application.js');
-const Logger = require('../logger.js');
-const { sendToApi } = require('../models/send-to-api.js');
-
-async function stop (params) {
+export async function stop (params) {
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
 
   await application.undeploy({ id: ownerId, appId }).then(sendToApi);
   Logger.println('App successfully stopped!');
 }
-
-module.exports = { stop };

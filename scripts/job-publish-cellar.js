@@ -1,8 +1,6 @@
-'use strict';
-
-const AWS = require('aws-sdk');
-const cfg = require('./config');
-const fs = require('fs-extra');
+import AWS from 'aws-sdk';
+import cfg from './config';
+import fs from 'fs-extra';
 
 async function run () {
 

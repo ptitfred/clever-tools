@@ -1,17 +1,15 @@
-'use strict';
+import { execSync, spawnSync } from 'child_process';
+import Logger from '../logger.js';
 
-const { execSync, spawnSync } = require('child_process');
-const Logger = require('../logger.js');
-
-function privateKey () {
+export function privateKey () {
   return execSync('wg genkey', { encoding: 'utf-8' }).trim();
 }
 
-function publicKey (privateKey) {
+export function publicKey (privateKey) {
   return execSync(`echo '${privateKey}' | wg pubkey`, { encoding: 'utf-8' }).trim();
 }
 
-function up (confPath) {
+export function up (confPath) {
   // We must use `spawn` with `detached: true` instead of `exec`
   // because `wg-quick up` starts a `wireguard-go` used by `wg-quick down`
   const { stdout, stderr } = spawnSync('wg-quick', ['up', confPath], { detached: true, encoding: 'utf-8' });
@@ -24,7 +22,7 @@ function up (confPath) {
   Logger.println('Activated WireGuard® tunnel');
 }
 
-function update (confPath, interfaceName) {
+export function update (confPath, interfaceName) {
   try {
     // Update WireGuard® configuration
     execSync(`wg-quick strip ${confPath} | wg syncconf ${interfaceName} /dev/stdin`);
@@ -35,7 +33,7 @@ function update (confPath, interfaceName) {
   }
 }
 
-function down (confPath) {
+export function down (confPath) {
   const { stdout, stderr } = spawnSync('wg-quick', ['down', confPath], { encoding: 'utf-8' });
   if (stdout.length > 0) {
     Logger.debug(stdout.trim());
@@ -48,7 +46,7 @@ function down (confPath) {
 /**
  * Check that `wg` and `wg-quick` are installed
  */
-function checkAvailable () {
+export function checkAvailable () {
   try {
     // The redirect to `/dev/null` ensures that your program does not produce the output of these commands.
     execSync('which wg > /dev/null 2>&1');
@@ -64,12 +62,3 @@ function checkAvailable () {
     return false;
   }
 }
-
-module.exports = {
-  privateKey,
-  publicKey,
-  up,
-  update,
-  down,
-  checkAvailable,
-};

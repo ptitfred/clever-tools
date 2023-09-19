@@ -1,12 +1,10 @@
-'use strict';
+import colors from 'colors/safe';
 
-const colors = require('colors/safe');
+import Logger from '../logger.js';
+import { getOwnerAndApp, getOrgaIdOrUserId } from '../models/notification.js';
 
-const Logger = require('../logger.js');
-const { getOwnerAndApp, getOrgaIdOrUserId } = require('../models/notification.js');
-
-const { getEmailhooks, createEmailhook, deleteEmailhook } = require('@clevercloud/client/cjs/api/v2/notification.js');
-const { sendToApi } = require('../models/send-to-api.js');
+import { getEmailhooks, createEmailhook, deleteEmailhook } from '@clevercloud/client/cjs/api/v2/notification.js';
+import { sendToApi } from '../models/send-to-api.js';
 
 function displayEmailhook (hook) {
   Logger.println((hook.name && colors.bold(hook.name)) || hook.id);
@@ -23,7 +21,7 @@ function displayEmailhook (hook) {
   Logger.println();
 }
 
-async function list (params) {
+export async function list (params) {
   const { org, 'list-all': listAll } = params.options;
 
   // TODO: fix alias option
@@ -38,7 +36,7 @@ async function list (params) {
     .forEach((hook) => displayEmailhook(hook));
 }
 
-function getEmailNotificationTargets (notifTargets) {
+export function getEmailNotificationTargets (notifTargets) {
 
   if (notifTargets == null) {
     return [];
@@ -60,7 +58,7 @@ function getEmailNotificationTargets (notifTargets) {
     .filter((e) => e != null);
 }
 
-async function add (params) {
+export async function add (params) {
   const { org, event: events, service, notify: notifTargets } = params.options;
   const [name] = params.args;
 
@@ -79,7 +77,7 @@ async function add (params) {
   Logger.println('The webhook has been added');
 }
 
-async function remove (params) {
+export async function remove (params) {
   const { org } = params.options;
   const [notificationId] = params.args;
 
@@ -88,11 +86,3 @@ async function remove (params) {
 
   Logger.println('The notification has been successfully removed');
 }
-
-module.exports = {
-  list,
-  add,
-  remove,
-  // For tests,
-  getEmailNotificationTargets,
-};

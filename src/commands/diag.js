@@ -1,16 +1,14 @@
-'use strict';
+import os from 'os';
 
-const os = require('os');
+import { releaseInfo as getLinuxInfos } from 'linux-release-info';
+import colors from 'colors/safe';
 
-const { releaseInfo: getLinuxInfos } = require('linux-release-info');
-const colors = require('colors/safe');
+import Logger from '../logger.js';
+import pkg from '../../package.json';
+import User from '../models/user.js';
+import { conf, loadOAuthConf } from '../models/configuration.js';
 
-const Logger = require('../logger.js');
-const pkg = require('../../package.json');
-const User = require('../models/user.js');
-const { conf, loadOAuthConf } = require('../models/configuration.js');
-
-async function diag () {
+export async function diag () {
 
   const userId = await User.getCurrentId().catch(() => null);
   const authDetails = await loadOAuthConf();
@@ -53,5 +51,3 @@ async function diag () {
     Logger.println('User ID       ' + colors.red('Not connected'));
   }
 }
-
-module.exports = { diag };

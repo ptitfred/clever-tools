@@ -1,15 +1,13 @@
-'use strict';
+import ngApi from '@clevercloud/client/cjs/api/v4/network-group.js';
 
-const ngApi = require('@clevercloud/client/cjs/api/v4/network-group.js');
+import { sendToApi } from '../../models/send-to-api.js';
 
-const { sendToApi } = require('../../models/send-to-api.js');
+import Logger from '../../logger.js';
+import NetworkGroup from '../../models/networkgroup.js';
+import Formatter from '../../models/format-string.js';
+import TableFormatter from '../../models/format-ng-table.js';
 
-const Logger = require('../../logger.js');
-const NetworkGroup = require('../../models/networkgroup.js');
-const Formatter = require('../../models/format-string.js');
-const TableFormatter = require('../../models/format-ng-table.js');
-
-async function listMembers (params) {
+export async function listMembers (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, 'natural-name': naturalName, json } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -33,7 +31,7 @@ async function listMembers (params) {
   }
 }
 
-async function getMember (params) {
+export async function getMember (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, 'member-id': memberId, 'natural-name': naturalName, json } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel); ;
@@ -50,7 +48,7 @@ async function getMember (params) {
   }
 }
 
-async function addMember (params) {
+export async function addMember (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, 'member-id': memberId, type, 'domain-name': domainName, label } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -62,7 +60,7 @@ async function addMember (params) {
   Logger.println(`Successfully added member ${Formatter.formatString(memberId)} to Network Group ${Formatter.formatString(networkGroupId)}.`);
 }
 
-async function removeMember (params) {
+export async function removeMember (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, 'member-id': memberId } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -71,10 +69,3 @@ async function removeMember (params) {
 
   Logger.println(`Successfully removed member ${Formatter.formatString(memberId)} from Network Group ${Formatter.formatString(networkGroupId)}.`);
 }
-
-module.exports = {
-  listMembers,
-  getMember,
-  addMember,
-  removeMember,
-};

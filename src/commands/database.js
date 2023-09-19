@@ -1,15 +1,13 @@
-'use strict';
-
-const { sendToApi } = require('../models/send-to-api.js');
-const { getBackups } = require('@clevercloud/client/cjs/api/v2/backups.js');
-const { println } = require('../logger.js');
+import { sendToApi } from '../models/send-to-api.js';
+import { getBackups } from '@clevercloud/client/cjs/api/v2/backups.js';
+import { println } from '../logger.js';
 const formatTable = require('../format-table')();
-const superagent = require('superagent');
-const fs = require('fs');
-const { findOwnerId } = require('../models/addon.js');
-const { resolveRealId } = require('../models/ids-resolver.js');
+import superagent from 'superagent';
+import fs from 'fs';
+import { findOwnerId } from '../models/addon.js';
+import { resolveRealId } from '../models/ids-resolver.js';
 
-async function listBackups (params) {
+export async function listBackups (params) {
 
   const { org } = params.options;
   const [addonIdOrRealId] = params.args;
@@ -44,7 +42,7 @@ async function listBackups (params) {
   ]));
 }
 
-async function downloadBackups (params) {
+export async function downloadBackups (params) {
 
   const { org, output } = params.options;
   const [addonIdOrRealId, backupId] = params.args;
@@ -70,5 +68,3 @@ async function downloadBackups (params) {
 
   process.stdout.write(res.body);
 }
-
-module.exports = { listBackups, downloadBackups };

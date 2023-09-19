@@ -1,9 +1,7 @@
-'use strict';
-
-const cfg = require('./config');
-const { promises: fs } = require('fs');
-const path = require('path');
-const superagent = require('superagent');
+import cfg from './config';
+import { promises as fs } from 'fs';
+import path from 'path';
+import superagent from 'superagent';
 
 const NEXUS_DEB = {
   stable: 'https://nexus.clever-cloud.com/repository/deb/',

@@ -1,8 +1,6 @@
-'use strict';
-
-const cfg = require('./config');
-const fs = require('fs-extra');
-const { cloneGitProject, applyTemplates, commitAndPush } = require('./utils');
+import cfg from './config';
+import fs from 'fs-extra';
+import { cloneGitProject, applyTemplates, commitAndPush } from './utils';
 
 async function run () {
 

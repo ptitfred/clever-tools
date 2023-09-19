@@ -1,11 +1,9 @@
-'use strict';
+import formatNgTable from '../format-table.js';
+import colors from 'colors/safe';
 
-const formatNgTable = require('../format-table.js');
-const colors = require('colors/safe');
-
-const AppConfig = require('./app_configuration.js');
-const Logger = require('../logger.js');
-const Formatter = require('./format-string.js');
+import AppConfig from './app_configuration.js';
+import Logger from '../logger.js';
+import Formatter from './format-string.js';
 
 function printSeparator (columnLengths) {
   Logger.println('─'.repeat(columnLengths.reduce((a, b) => a + b + 2)));
@@ -20,7 +18,7 @@ const networkGroupsTableColumnLengths = [
   48, /* description */
 ];
 const formatNetworkGroupsTable = formatNgTable(networkGroupsTableColumnLengths);
-function formatNetworkGroupsLine (ng) {
+export function formatNetworkGroupsLine (ng) {
   return formatNetworkGroupsTable([
     [
       Formatter.formatId(ng.id),
@@ -31,7 +29,7 @@ function formatNetworkGroupsLine (ng) {
     ],
   ]);
 };
-function printNetworkGroupsTableHeader () {
+export function printNetworkGroupsTableHeader () {
   Logger.println(colors.bold(formatNetworkGroupsTable([
     ['Network Group ID', 'Label', 'Members', 'Peers', 'Description'],
   ])));
@@ -45,7 +43,7 @@ const membersTableColumnLengths = [
   110, /* domain-name length */
 ];
 const formatMembersTable = formatNgTable(membersTableColumnLengths);
-async function formatMembersLine (member, showAliases = false) {
+export async function formatMembersLine (member, showAliases = false) {
   return formatMembersTable([
     [
       showAliases
@@ -57,7 +55,7 @@ async function formatMembersLine (member, showAliases = false) {
     ],
   ]);
 };
-async function printMembersTableHeader (naturalName = false) {
+export async function printMembersTableHeader (naturalName = false) {
   Logger.println(colors.bold(formatMembersTable([
     [
       naturalName ? 'Member' : 'Member ID',
@@ -78,7 +76,7 @@ const peersTableColumnLengths = [
   36, /* label length */
 ];
 const formatPeersTable = formatNgTable(peersTableColumnLengths);
-function formatPeersLine(peer) {
+export function formatPeersLine(peer) {
   const ip = (peer.endpoint.type === 'ServerEndpoint') ? peer.endpoint.ng_term.host : peer.endpoint.ng_ip;
   return formatPeersTable([
     [
@@ -91,7 +89,7 @@ function formatPeersLine(peer) {
     ],
   ]);
 };
-function printPeersTableHeader () {
+export function printPeersTableHeader () {
   Logger.println(colors.bold(formatPeersTable([
     [
       'Peer ID',
@@ -104,12 +102,3 @@ function printPeersTableHeader () {
   ])));
   printSeparator(peersTableColumnLengths);
 }
-
-module.exports = {
-  formatNetworkGroupsLine,
-  printNetworkGroupsTableHeader,
-  formatMembersLine,
-  printMembersTableHeader,
-  formatPeersLine,
-  printPeersTableHeader,
-};

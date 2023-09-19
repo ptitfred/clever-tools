@@ -1,11 +1,9 @@
-'use strict';
+import cliparse from 'cliparse';
 
-const cliparse = require('cliparse');
+import AccessLogs from './models/accesslogs.js';
+import Application from './models/application.js';
 
-const AccessLogs = require('./models/accesslogs.js');
-const Application = require('./models/application.js');
-
-function flavor (flavor) {
+export function flavor (flavor) {
   const flavors = Application.listAvailableFlavors();
   if (flavors.includes(flavor)) {
     return cliparse.parsers.success(flavor);
@@ -13,14 +11,14 @@ function flavor (flavor) {
   return cliparse.parsers.error('Invalid value: ' + flavor);
 }
 
-function buildFlavor (flavorOrDisabled) {
+export function buildFlavor (flavorOrDisabled) {
   if (flavorOrDisabled === 'disabled') {
     return cliparse.parsers.success(flavorOrDisabled);
   }
   return flavor(flavorOrDisabled);
 }
 
-function instances (instances) {
+export function instances (instances) {
   const parsedInstances = parseInt(instances, 10);
   if (isNaN(parsedInstances)) {
     return cliparse.parsers.error('Invalid number: ' + instances);
@@ -31,7 +29,7 @@ function instances (instances) {
   return cliparse.parsers.success(parsedInstances);
 }
 
-function date (dateString) {
+export function date (dateString) {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
     return cliparse.parsers.error('Invalid date: ' + dateString + ' (timestamps or IS0 8601 dates are accepted)');
@@ -41,7 +39,7 @@ function date (dateString) {
 
 const appIdRegex = /^app_[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function appIdOrName (string) {
+export function appIdOrName (string) {
   if (string.match(appIdRegex)) {
     return cliparse.parsers.success({ app_id: string });
   }
@@ -50,7 +48,7 @@ function appIdOrName (string) {
 
 const orgaIdRegex = /^(user_|orga_)[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function orgaIdOrName (string) {
+export function orgaIdOrName (string) {
   if (string.match(orgaIdRegex)) {
     return cliparse.parsers.success({ orga_id: string });
   }
@@ -59,7 +57,7 @@ function orgaIdOrName (string) {
 
 const addonIdRegex = /^addon_[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function addonIdOrName (string) {
+export function addonIdOrName (string) {
   if (string.match(addonIdRegex)) {
     return cliparse.parsers.success({ addon_id: string });
   }
@@ -68,18 +66,18 @@ function addonIdOrName (string) {
 
 const ngIdRegex = /^ng_[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function ngIdOrLabel (string) {
+export function ngIdOrLabel (string) {
   if (string.match(ngIdRegex)) {
     return cliparse.parsers.success({ ng_id: string });
   }
   return cliparse.parsers.success({ ng_label: string });
 }
 
-function commaSeparated (string) {
+export function commaSeparated (string) {
   return cliparse.parsers.success(string.split(','));
 }
 
-function integer (string) {
+export function integer (string) {
   const integer = parseInt(string);
   if (isNaN(integer)) {
     return cliparse.parsers.error('Invalid number: ' + string);
@@ -90,14 +88,14 @@ function integer (string) {
 // /^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$/i;
 const tagRegex = /^[^,\s]+$/;
 
-function tag (string) {
+export function tag (string) {
   if (string.match(tagRegex)) {
     return cliparse.parsers.success(string);
   }
   return cliparse.parsers.error(`Invalid tag '${string}'. Should match ${tagRegex}`);
 }
 
-function tags (string) {
+export function tags (string) {
   if (String(string).length === 0) {
     return cliparse.parsers.success([]);
   }
@@ -110,7 +108,7 @@ function tags (string) {
   return cliparse.parsers.success(tags);
 }
 
-function ngMemberType (string) {
+export function ngMemberType (string) {
   const possible = ['application', 'addon', 'external'];
   if (possible.includes(string)) {
     return cliparse.parsers.success(string);
@@ -118,7 +116,7 @@ function ngMemberType (string) {
   return cliparse.parsers.error(`Invalid member type '${string}'. Should be in ${JSON.stringify(possible)}`);
 }
 
-function ngPeerRole (string) {
+export function ngPeerRole (string) {
   const possible = ['client', 'server'];
   if (possible.includes(string)) {
     return cliparse.parsers.success(string);
@@ -128,7 +126,7 @@ function ngPeerRole (string) {
 
 const ipAddressRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])$/;
 
-function ipAddress (string) {
+export function ipAddress (string) {
   if (string.match(ipAddressRegex)) {
     return cliparse.parsers.success(string);
   }
@@ -137,30 +135,9 @@ function ipAddress (string) {
 
 const portNumberRegex = /^\d{1,5}$/;
 
-function portNumber (number) {
+export function portNumber (number) {
   if (String(number).match(portNumberRegex)) {
     return cliparse.parsers.success(number);
   }
   return cliparse.parsers.error(`Invalid port number '${number}'. Should match ${portNumberRegex}`);
 }
-
-module.exports = {
-  buildFlavor,
-  flavor,
-  instances,
-  date,
-  appIdOrName,
-  orgaIdOrName,
-  addonIdOrName,
-  ngIdOrLabel,
-  commaSeparated,
-  integer,
-  tag,
-  tags,
-  ngMemberType,
-  ngPeerRole,
-  ipAddressRegex,
-  ipAddress,
-  portNumberRegex,
-  portNumber,
-};

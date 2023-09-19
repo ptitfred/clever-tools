@@ -1,10 +1,6 @@
-'use strict';
+import Logger from '../logger.js';
+import pkg from '../../package.json';
 
-const Logger = require('../logger.js');
-const pkg = require('../../package.json');
-
-async function version () {
+export async function version () {
   Logger.println(pkg.version);
 }
-
-module.exports = { version };

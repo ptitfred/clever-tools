@@ -1,18 +1,16 @@
-'use strict';
+import colors from 'colors/safe';
 
-const colors = require('colors/safe');
-
-const AppConfig = require('../models/app_configuration.js');
-const Application = require('../models/application.js');
-const git = require('../models/git.js');
-const Log = require('../models/log.js');
-const Logger = require('../logger.js');
-const { getAllDeployments } = require('@clevercloud/client/cjs/api/v2/application.js');
-const { sendToApi } = require('../models/send-to-api.js');
+import AppConfig from '../models/app_configuration.js';
+import Application from '../models/application.js';
+import git from '../models/git.js';
+import Log from '../models/log.js';
+import Logger from '../logger.js';
+import { getAllDeployments } from '@clevercloud/client/cjs/api/v2/application.js';
+import { sendToApi } from '../models/send-to-api.js';
 
 // Once the API call to redeploy() has been triggered successfully,
 // the rest (waiting for deployment state to evolve and displaying logs) is done with auto retry (resilient to network failures)
-async function deploy (params) {
+export async function deploy (params) {
   const { alias, branch: branchName, quiet, force, follow } = params.options;
 
   const appData = await AppConfig.getAppDetails({ alias });
@@ -63,5 +61,3 @@ async function deploy (params) {
 
   return Log.watchDeploymentAndDisplayLogs({ ownerId, appId, commitId: commitIdToPush, knownDeployments, quiet, follow });
 }
-
-module.exports = { deploy };

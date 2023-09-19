@@ -1,16 +1,14 @@
-'use strict';
+import colors from 'colors/safe';
 
-const colors = require('colors/safe');
-
-const AppConfig = require('../models/app_configuration.js');
-const Application = require('../models/application.js');
-const git = require('../models/git.js');
-const Log = require('../models/log.js');
-const Logger = require('../logger.js');
+import AppConfig from '../models/app_configuration.js';
+import Application from '../models/application.js';
+import git from '../models/git.js';
+import Log from '../models/log.js';
+import Logger from '../logger.js';
 
 // Once the API call to redeploy() has been triggerred successfully,
 // the rest (waiting for deployment state to evolve and displaying logs) is done with auto retry (resilient to network pb)
-async function restart (params) {
+export async function restart (params) {
   const { alias, quiet, commit, 'without-cache': withoutCache, follow } = params.options;
 
   const { ownerId, appId, name: appName } = await AppConfig.getAppDetails({ alias });
@@ -28,5 +26,3 @@ async function restart (params) {
 
   return Log.watchDeploymentAndDisplayLogs({ ownerId, appId, deploymentId: redeploy.deploymentId, quiet, follow });
 }
-
-module.exports = { restart };

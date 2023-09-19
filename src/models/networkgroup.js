@@ -1,13 +1,11 @@
-'use strict';
-
 const autocomplete = require('cliparse').autocomplete;
-const Organisation = require('../models/organisation.js');
-const User = require('../models/user.js');
-const AppConfig = require('./app_configuration.js');
-const ngApi = require('@clevercloud/client/cjs/api/v4/network-group.js');
-const { sendToApi } = require('./send-to-api.js');
+import Organisation from '../models/organisation.js';
+import User from '../models/user.js';
+import AppConfig from './app_configuration.js';
+import ngApi from '@clevercloud/client/cjs/api/v4/network-group.js';
+import { sendToApi } from './send-to-api.js';
 
-async function getOwnerId (orgaIdOrName, alias) {
+export async function getOwnerId (orgaIdOrName, alias) {
   if (orgaIdOrName == null) {
     try {
       return (await AppConfig.getAppDetails({ alias })).ownerId;
@@ -21,7 +19,7 @@ async function getOwnerId (orgaIdOrName, alias) {
   }
 }
 
-async function getId (ownerId, ngIdOrLabel) {
+export async function getId (ownerId, ngIdOrLabel) {
   if (ngIdOrLabel == null) {
     return null;
   }
@@ -48,17 +46,10 @@ async function getByLabel (owner_id, label) {
   return filteredNgs[0];
 }
 
-function listAvailablePeerRoles () {
+export function listAvailablePeerRoles () {
   return autocomplete.words(['client', 'server']);
 }
 
-function listAvailableMemberTypes () {
+export function listAvailableMemberTypes () {
   return autocomplete.words(['application', 'addon', 'external']);
 }
-
-module.exports = {
-  getOwnerId,
-  getId,
-  listAvailablePeerRoles,
-  listAvailableMemberTypes,
-};

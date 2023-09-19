@@ -1,7 +1,5 @@
-'use strict';
-
-const cfg = require('./config');
-const { cloneGitProject, applyTemplates, tagAndPush, commitAndPush } = require('./utils');
+import cfg from './config';
+import { cloneGitProject, applyTemplates, tagAndPush, commitAndPush } from './utils';
 
 async function run () {
 

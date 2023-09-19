@@ -1,7 +1,5 @@
-'use strict';
-
-const cfg = require('./config');
-const { exec } = require('./utils');
+import cfg from './config';
+import { exec } from './utils';
 
 async function run () {
   const isStableVersion = cfg.isStableVersion();

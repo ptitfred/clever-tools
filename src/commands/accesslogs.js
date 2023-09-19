@@ -1,18 +1,16 @@
-'use strict';
+import { getAccessLogsFromWarp10InBatches, getContinuousAccessLogsFromWarp10 } from '@clevercloud/client/cjs/access-logs.js';
+import { getWarp10AccessLogsToken } from '@clevercloud/client/cjs/api/v2/warp-10.js';
+import { ONE_HOUR_MICROS, ONE_SECOND_MICROS, toMicroTimestamp } from '@clevercloud/client/cjs/utils/date.js';
 
-const { getAccessLogsFromWarp10InBatches, getContinuousAccessLogsFromWarp10 } = require('@clevercloud/client/cjs/access-logs.js');
-const { getWarp10AccessLogsToken } = require('@clevercloud/client/cjs/api/v2/warp-10.js');
-const { ONE_HOUR_MICROS, ONE_SECOND_MICROS, toMicroTimestamp } = require('@clevercloud/client/cjs/utils/date.js');
-
-const Addon = require('../models/addon.js');
-const AppConfig = require('../models/app_configuration.js');
-const Logger = require('../logger.js');
-const { getFormatter } = require('../models/accesslogs.js');
-const { sendToApi, sendToWarp10 } = require('../models/send-to-api.js');
+import Addon from '../models/addon.js';
+import AppConfig from '../models/app_configuration.js';
+import Logger from '../logger.js';
+import { getFormatter } from '../models/accesslogs.js';
+import { sendToApi, sendToWarp10 } from '../models/send-to-api.js';
 
 const CONTINUOUS_DELAY = ONE_SECOND_MICROS * 5;
 
-async function accessLogs (params) {
+export async function accessLogs (params) {
   const { alias, format, before, after, addon: addonId, follow } = params.options;
 
   const { ownerId, appId, realAddonId } = await getIds(addonId, alias);
@@ -49,5 +47,3 @@ async function getIds (addonId, alias) {
   }
   return AppConfig.getAppDetails({ alias });
 }
-
-module.exports = { accessLogs };

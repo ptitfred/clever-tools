@@ -1,10 +1,8 @@
-'use strict';
+import AppConfig from '../models/app_configuration.js';
+import Log from '../models/log.js';
+import Logger from '../logger.js';
 
-const AppConfig = require('../models/app_configuration.js');
-const Log = require('../models/log.js');
-const Logger = require('../logger.js');
-
-async function appLogs (params) {
+export async function appLogs (params) {
   const { alias, after: since, before: until, search, 'deployment-id': deploymentId } = params.options;
   const { addon: addonId } = params.options;
 
@@ -16,5 +14,3 @@ async function appLogs (params) {
 
   return Log.displayLogs({ appAddonId, since, until, filter, deploymentId });
 }
-
-module.exports = { appLogs };

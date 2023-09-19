@@ -1,7 +1,5 @@
-'use strict';
-
-const _ = require('lodash');
-const colors = require('colors/safe');
+import _ from 'lodash';
+import colors from 'colors/safe';
 
 function getPrefix (severity) {
   const prefix = `[${severity.toUpperCase()}] `;
@@ -57,5 +55,3 @@ Logger.printErrorLine = console.error;
 
 // Only exported for testing, shouldn't be used directly
 Logger.processApiError = processApiError;
-
-module.exports = Logger;

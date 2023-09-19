@@ -1,13 +1,11 @@
-'use strict';
+import _ from 'lodash';
+import colors from 'colors/safe';
 
-const _ = require('lodash');
-const colors = require('colors/safe');
+import AppConfig from '../models/app_configuration.js';
+import Logger from '../logger.js';
 
-const AppConfig = require('../models/app_configuration.js');
-const Logger = require('../logger.js');
-
-const { get: getApplication, getAllInstances } = require('@clevercloud/client/cjs/api/v2/application.js');
-const { sendToApi } = require('../models/send-to-api.js');
+import { get as getApplication, getAllInstances } from '@clevercloud/client/cjs/api/v2/application.js';
+import { sendToApi } from '../models/send-to-api.js';
 
 function displayGroupInfo (instances, commit) {
   return `(${displayFlavors(instances)},  Commit: ${commit || 'N/A'})`;
@@ -64,7 +62,7 @@ function displayScalability (app) {
   Dedicated build: ${app.separateBuild ? colors.bold(app.buildFlavor.name) : colors.red('disabled')}`;
 }
 
-async function status (params) {
+export async function status (params) {
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
 
@@ -74,5 +72,3 @@ async function status (params) {
   Logger.println(computeStatus(instances, app));
   Logger.println(displayScalability(app));
 }
-
-module.exports = { status };

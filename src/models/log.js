@@ -1,14 +1,12 @@
-'use strict';
+import _ from 'lodash';
+import colors from 'colors/safe';
 
-const _ = require('lodash');
-const colors = require('colors/safe');
-
-const Logger = require('../logger.js');
-const { Deferred } = require('./utils.js');
-const { getOldLogs } = require('@clevercloud/client/cjs/api/v2/log.js');
-const { LogsStream } = require('@clevercloud/client/cjs/streams/logs.node.js');
-const { sendToApi, getHostAndTokens } = require('./send-to-api.js');
-const { waitForDeploymentEnd, waitForDeploymentStart } = require('./deployments.js');
+import Logger from '../logger.js';
+import { Deferred } from './utils.js';
+import { getOldLogs } from '@clevercloud/client/cjs/api/v2/log.js';
+import { LogsStream } from '@clevercloud/client/cjs/streams/logs.node.js';
+import { sendToApi, getHostAndTokens } from './send-to-api.js';
+import { waitForDeploymentEnd, waitForDeploymentStart } from './deployments.js';
 
 function isCleverMessage (line) {
   return line._source.syslog_program === '/home/bas/rubydeployer/deployer.rb';
@@ -68,7 +66,7 @@ async function displayLiveLogs ({ appId, filter, until, deploymentId }, deferred
   return logsStream;
 }
 
-async function displayLogs ({ appAddonId, until, since, filter, deploymentId }) {
+export async function displayLogs ({ appAddonId, until, since, filter, deploymentId }) {
 
   const now = new Date();
 
@@ -100,7 +98,7 @@ async function displayLogs ({ appAddonId, until, since, filter, deploymentId }) 
   return deferred.promise;
 }
 
-async function watchDeploymentAndDisplayLogs ({ ownerId, appId, deploymentId, commitId, knownDeployments, quiet, follow }) {
+export async function watchDeploymentAndDisplayLogs ({ ownerId, appId, deploymentId, commitId, knownDeployments, quiet, follow }) {
 
   Logger.println('Waiting for deployment to start…');
   const deployment = await waitForDeploymentStart({ ownerId, appId, deploymentId, commitId, knownDeployments });
@@ -141,5 +139,3 @@ async function watchDeploymentAndDisplayLogs ({ ownerId, appId, deploymentId, co
     throw new Error('Deployment failed. Please check the logs');
   }
 }
-
-module.exports = { displayLogs, watchDeploymentAndDisplayLogs };

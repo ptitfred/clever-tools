@@ -1,13 +1,11 @@
-'use strict';
+import AppConfig from '../models/app_configuration.js';
+import Logger from '../logger.js';
+import variables from '../models/variables.js';
+import { sendToApi } from '../models/send-to-api.js';
+import { toNameEqualsValueString, validateName } from '@clevercloud/client/cjs/utils/env-vars.js';
+import application from '@clevercloud/client/cjs/api/v2/application.js';
 
-const AppConfig = require('../models/app_configuration.js');
-const Logger = require('../logger.js');
-const variables = require('../models/variables.js');
-const { sendToApi } = require('../models/send-to-api.js');
-const { toNameEqualsValueString, validateName } = require('@clevercloud/client/cjs/utils/env-vars.js');
-const application = require('@clevercloud/client/cjs/api/v2/application.js');
-
-async function list (params) {
+export async function list (params) {
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
 
@@ -19,7 +17,7 @@ async function list (params) {
   Logger.println(toNameEqualsValueString(pairs));
 };
 
-async function set (params) {
+export async function set (params) {
   const [varName, varValue] = params.args;
   const { alias } = params.options;
 
@@ -37,7 +35,7 @@ async function set (params) {
   Logger.println('Your published config item has been successfully saved');
 };
 
-async function rm (params) {
+export async function rm (params) {
   const [varName] = params.args;
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
@@ -49,7 +47,7 @@ async function rm (params) {
   Logger.println('Your published config item has been successfully removed');
 };
 
-async function importEnv (params) {
+export async function importEnv (params) {
   const { alias, json } = params.options;
   const format = json ? 'json' : 'name-equals-value';
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
@@ -59,5 +57,3 @@ async function importEnv (params) {
 
   Logger.println('Your published configs have been set');
 };
-
-module.exports = { list, set, rm, importEnv };

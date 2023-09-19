@@ -1,11 +1,9 @@
-'use strict';
+import colors from 'colors/safe';
 
-const colors = require('colors/safe');
+import Logger from '../logger.js';
+import User from '../models/user.js';
 
-const Logger = require('../logger.js');
-const User = require('../models/user.js');
-
-async function profile () {
+export async function profile () {
   const { id, name, email, preferredMFA } = await User.getCurrent();
   const has2FA = (preferredMFA != null && preferredMFA !== 'NONE') ? 'yes' : 'no';
   const formattedName = name || colors.red.bold('[not specified]');
@@ -15,5 +13,3 @@ async function profile () {
   Logger.println('Email            ' + email);
   Logger.println('Two factor auth  ' + has2FA);
 };
-
-module.exports = { profile };

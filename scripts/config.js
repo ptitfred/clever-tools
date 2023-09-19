@@ -1,8 +1,6 @@
-'use strict';
-
-const os = require('os');
-const pkgJson = require('../package.json');
-const semver = require('semver');
+import os from 'os';
+import pkgJson from '../package.json';
+import semver from 'semver';
 
 const archList = ['linux', 'macos', 'win'];
 const nodeVersion = pkgJson['pkg-node-version'];
@@ -25,7 +23,7 @@ const appInfos = {
   keywords: pkgJson.keywords.join(' '),
 };
 
-function getVersion (striclyFromTag = false) {
+export function getVersion (striclyFromTag = false) {
   const gitTag = process.env.GIT_TAG_NAME;
   if (!gitTag) {
     if (striclyFromTag) {
@@ -40,11 +38,11 @@ function getVersion (striclyFromTag = false) {
   return gitTagVersion;
 }
 
-function getNupkgVersion (version) {
+export function getNupkgVersion (version) {
   return version.replace('beta.', 'beta');
 }
 
-function isStableVersion () {
+export function isStableVersion () {
   try {
     const version = getVersion(true);
     return semver.prerelease(version) == null;
@@ -58,17 +56,17 @@ function getBinaryFilename (arch) {
   return (arch === 'win') ? 'clever.exe' : 'clever';
 }
 
-function getBinaryFilepath (arch, version) {
+export function getBinaryFilepath (arch, version) {
   const filename = getBinaryFilename(arch);
   return `${releasesDir}/${version}/${appInfos.name}-${version}_${arch}/${filename}`;
 }
 
-function getArchiveFilepath (arch, version) {
+export function getArchiveFilepath (arch, version) {
   const archiveExt = (arch === 'win') ? '.zip' : '.tar.gz';
   return `${releasesDir}/${version}/${appInfos.name}-${version}_${arch}${archiveExt}`;
 }
 
-function getBundleFilepath (type, version) {
+export function getBundleFilepath (type, version) {
   if (type === 'nupkg') {
     const nupkgVersion = getNupkgVersion(version);
     return `${releasesDir}/${version}/${appInfos.name}.${nupkgVersion}.${type}`;
@@ -76,7 +74,7 @@ function getBundleFilepath (type, version) {
   return `${releasesDir}/${version}/${appInfos.name}-${version}.${type}`;
 }
 
-function getNexusAuth () {
+export function getNexusAuth () {
   const user = process.env.NEXUS_USER || 'ci';
   const password = process.env.NEXUS_PASSWORD;
   const nugetApiKey = process.env.NUGET_API_KEY;
@@ -89,7 +87,7 @@ function getNexusAuth () {
   return { user, password, nugetApiKey };
 }
 
-function getNpmToken () {
+export function getNpmToken () {
   const token = process.env.NPM_TOKEN;
   if (!token) {
     throw new Error('Could not read NPM token!');
@@ -97,28 +95,10 @@ function getNpmToken () {
   return token;
 }
 
-function getGpgConf () {
+export function getGpgConf () {
   const gpgPrivateKey = process.env.RPM_GPG_PRIVATE_KEY;
   const gpgPath = process.env.RPM_GPG_PATH || os.homedir();
   const gpgName = process.env.RPM_GPG_NAME;
   const gpgPass = process.env.RPM_GPG_PASS;
   return { gpgPrivateKey, gpgPath, gpgName, gpgPass };
 }
-
-module.exports = {
-  archList,
-  nodeVersion,
-  releasesDir,
-  cellar,
-  git,
-  appInfos,
-  getVersion,
-  getNupkgVersion,
-  isStableVersion,
-  getBinaryFilepath,
-  getArchiveFilepath,
-  getBundleFilepath,
-  getNexusAuth,
-  getNpmToken,
-  getGpgConf,
-};

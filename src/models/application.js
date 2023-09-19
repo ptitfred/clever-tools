@@ -1,31 +1,29 @@
-'use strict';
-
-const _ = require('lodash');
-const application = require('@clevercloud/client/cjs/api/v2/application.js');
+import _ from 'lodash';
+import application from '@clevercloud/client/cjs/api/v2/application.js';
 const autocomplete = require('cliparse').autocomplete;
-const product = require('@clevercloud/client/cjs/api/v2/product.js');
+import product from '@clevercloud/client/cjs/api/v2/product.js';
 
-const AppConfiguration = require('./app_configuration.js');
-const Interact = require('./interact.js');
-const Logger = require('../logger.js');
-const Organisation = require('./organisation.js');
-const User = require('./user.js');
+import AppConfiguration from './app_configuration.js';
+import Interact from './interact.js';
+import Logger from '../logger.js';
+import Organisation from './organisation.js';
+import User from './user.js';
 
-const { sendToApi } = require('../models/send-to-api.js');
+import { sendToApi } from '../models/send-to-api.js';
 
-function listAvailableTypes () {
+export function listAvailableTypes () {
   return autocomplete.words(['docker', 'elixir', 'go', 'gradle', 'haskell', 'jar', 'maven', 'node', 'php', 'play1', 'play2', 'python', 'ruby', 'rust', 'sbt', 'static-apache', 'war']);
 };
 
-function listAvailableZones () {
+export function listAvailableZones () {
   return autocomplete.words(['par', 'mtl']);
 };
 
-function listAvailableAliases () {
+export function listAvailableAliases () {
   return AppConfiguration.loadApplicationConf().then(({ apps }) => autocomplete.words(_.map(apps, 'alias')));
 };
 
-function listAvailableFlavors () {
+export function listAvailableFlavors () {
   return ['pico', 'nano', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
 };
 
@@ -51,7 +49,7 @@ async function getInstanceType (type) {
   return instanceVariant;
 };
 
-async function create (name, typeName, region, orgaIdOrName, github) {
+export async function create (name, typeName, region, orgaIdOrName, github) {
   Logger.debug('Create the application…');
 
   const ownerId = (orgaIdOrName != null)
@@ -82,7 +80,7 @@ async function create (name, typeName, region, orgaIdOrName, github) {
   return application.create({ id: ownerId }, newApp).then(sendToApi);
 };
 
-async function deleteApp (addDetails, skipConfirmation) {
+export async function deleteApp (addDetails, skipConfirmation) {
   Logger.debug('Deleting app: ' + addDetails.name + ' (' + addDetails.appId + ')');
 
   if (!skipConfirmation) {
@@ -112,7 +110,7 @@ async function getByName (ownerId, name) {
   return getApplicationByName(apps, name);
 };
 
-function get (ownerId, appId) {
+export function get (ownerId, appId) {
   Logger.debug(`Get information for the app: ${appId}`);
   return application.get({ id: ownerId, appId }).then(sendToApi);
 };
@@ -125,7 +123,7 @@ function getFromSelf (appId) {
   return application.get({ appId }).then(sendToApi);
 };
 
-async function linkRepo (app, orgaIdOrName, alias, ignoreParentConfig) {
+export async function linkRepo (app, orgaIdOrName, alias, ignoreParentConfig) {
   Logger.debug(`Linking current repository to the app: ${app.app_id || app.app_name}`);
 
   const ownerId = (orgaIdOrName != null)
@@ -139,18 +137,18 @@ async function linkRepo (app, orgaIdOrName, alias, ignoreParentConfig) {
   return AppConfiguration.addLinkedApplication(appData, alias, ignoreParentConfig);
 };
 
-function unlinkRepo (alias) {
+export function unlinkRepo (alias) {
   Logger.debug(`Unlinking current repository from the app: ${alias}`);
   return AppConfiguration.removeLinkedApplication(alias);
 };
 
-function redeploy (ownerId, appId, commit, withoutCache) {
+export function redeploy (ownerId, appId, commit, withoutCache) {
   Logger.debug(`Redeploying the app: ${appId}`);
   const useCache = (withoutCache) ? 'no' : null;
   return application.redeploy({ id: ownerId, appId, commit, useCache }).then(sendToApi);
 };
 
-function mergeScalabilityParameters (scalabilityParameters, instance) {
+export function mergeScalabilityParameters (scalabilityParameters, instance) {
   const flavors = listAvailableFlavors();
 
   if (scalabilityParameters.minFlavor) {
@@ -182,7 +180,7 @@ function mergeScalabilityParameters (scalabilityParameters, instance) {
   return instance;
 };
 
-async function setScalability (appId, ownerId, scalabilityParameters, buildFlavor) {
+export async function setScalability (appId, ownerId, scalabilityParameters, buildFlavor) {
   Logger.info('Scaling the app: ' + appId);
 
   const app = await application.get({ id: ownerId, appId }).then(sendToApi);
@@ -206,7 +204,7 @@ async function setScalability (appId, ownerId, scalabilityParameters, buildFlavo
   return application.update({ id: ownerId, appId }, newConfig).then(sendToApi);
 };
 
-async function listDependencies (ownerId, appId, showAll) {
+export async function listDependencies (ownerId, appId, showAll) {
   const applicationDeps = await application.getAllDependencies({ id: ownerId, appId }).then(sendToApi);
 
   if (!showAll) {
@@ -222,30 +220,12 @@ async function listDependencies (ownerId, appId, showAll) {
   });
 }
 
-async function link (ownerId, appId, dependency) {
+export async function link (ownerId, appId, dependency) {
   const dependencyId = await getId(ownerId, dependency);
   return application.addDependency({ id: ownerId, appId, dependencyId }).then(sendToApi);
 };
 
-async function unlink (ownerId, appId, dependency) {
+export async function unlink (ownerId, appId, dependency) {
   const dependencyId = await getId(ownerId, dependency);
   return application.removeDependency({ id: ownerId, appId, dependencyId }).then(sendToApi);
-};
-
-module.exports = {
-  create,
-  deleteApp,
-  get,
-  link,
-  linkRepo,
-  listAvailableAliases,
-  listAvailableFlavors,
-  listAvailableTypes,
-  listAvailableZones,
-  listDependencies,
-  __mergeScalabilityParameters: mergeScalabilityParameters,
-  redeploy,
-  setScalability,
-  unlink,
-  unlinkRepo,
 };

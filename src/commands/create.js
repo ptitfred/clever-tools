@@ -1,10 +1,8 @@
-'use strict';
+import Application from '../models/application.js';
+import AppConfig from '../models/app_configuration.js';
+import Logger from '../logger.js';
 
-const Application = require('../models/application.js');
-const AppConfig = require('../models/app_configuration.js');
-const Logger = require('../logger.js');
-
-async function create (params) {
+export async function create (params) {
   const { type: typeName } = params.options;
   const [name] = params.args;
   const { org: orgaIdOrName, alias, region, github: githubOwnerRepo } = params.options;
@@ -22,5 +20,3 @@ function getGithubDetails (githubOwnerRepo) {
     return { owner, name };
   }
 }
-
-module.exports = { create };

@@ -1,6 +1,6 @@
-const cliparse = require('cliparse');
+import cliparse from 'cliparse';
 
-function getOutputFormatOption (formats = []) {
+export function getOutputFormatOption (formats = []) {
   const availableFormats = ['human', 'json', ...formats];
   return cliparse.option('format', {
     aliases: ['F'],
@@ -17,7 +17,3 @@ function getOutputFormatOption (formats = []) {
     },
   });
 }
-
-module.exports = {
-  getOutputFormatOption,
-};

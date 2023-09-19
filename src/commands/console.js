@@ -1,10 +1,8 @@
-'use strict';
+import AppConfig from '../models/app_configuration.js';
+import Logger from '../logger.js';
+import openPage from 'open';
 
-const AppConfig = require('../models/app_configuration.js');
-const Logger = require('../logger.js');
-const openPage = require('open');
-
-async function openConsole (params) {
+export async function openConsole (params) {
   const { alias } = params.options;
 
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
@@ -15,5 +13,3 @@ async function openConsole (params) {
   const url = `https://console.clever-cloud.com/${prefixPath}/applications/${appId}`;
   await openPage(url, { wait: false });
 }
-
-module.exports = { openConsole };

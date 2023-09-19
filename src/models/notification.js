@@ -1,12 +1,10 @@
-'use strict';
-
 const autocomplete = require('cliparse').autocomplete;
 
-const AppConfig = require('../models/app_configuration.js');
-const Organisation = require('../models/organisation.js');
-const User = require('../models/user.js');
+import AppConfig from '../models/app_configuration.js';
+import Organisation from '../models/organisation.js';
+import User from '../models/user.js';
 
-function listMetaEvents () {
+export function listMetaEvents () {
   return autocomplete.words([
     'META_SERVICE_LIFECYCLE',
     'META_DEPLOYMENT_RESULT',
@@ -15,13 +13,13 @@ function listMetaEvents () {
   ]);
 }
 
-function getOrgaIdOrUserId (orgIdOrName) {
+export function getOrgaIdOrUserId (orgIdOrName) {
   return (orgIdOrName == null)
     ? User.getCurrentId()
     : Organisation.getId(orgIdOrName);
 }
 
-async function getOwnerAndApp (alias, org, useLinkedApp) {
+export async function getOwnerAndApp (alias, org, useLinkedApp) {
 
   if (!useLinkedApp) {
     const ownerId = await getOrgaIdOrUserId(org);
@@ -30,9 +28,3 @@ async function getOwnerAndApp (alias, org, useLinkedApp) {
 
   return AppConfig.getAppDetails({ alias });
 }
-
-module.exports = {
-  listMetaEvents,
-  getOrgaIdOrUserId,
-  getOwnerAndApp,
-};

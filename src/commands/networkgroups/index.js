@@ -1,15 +1,13 @@
-'use strict';
+import ngApi from '@clevercloud/client/cjs/api/v4/network-group.js';
 
-const ngApi = require('@clevercloud/client/cjs/api/v4/network-group.js');
+import { sendToApi } from '../../models/send-to-api.js';
 
-const { sendToApi } = require('../../models/send-to-api.js');
+import Logger from '../../logger.js';
+import NetworkGroup from '../../models/networkgroup.js';
+import Formatter from '../../models/format-string.js';
+import TableFormatter from '../../models/format-ng-table.js';
 
-const Logger = require('../../logger.js');
-const NetworkGroup = require('../../models/networkgroup.js');
-const Formatter = require('../../models/format-string.js');
-const TableFormatter = require('../../models/format-ng-table.js');
-
-async function listNetworkGroups (params) {
+export async function listNetworkGroups (params) {
   const { org: orgaIdOrName, alias, json } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
 
@@ -32,7 +30,7 @@ async function listNetworkGroups (params) {
   }
 }
 
-async function createNg (params) {
+export async function createNg (params) {
   const { org: orgaIdOrName, alias, label, description, tags, json } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
 
@@ -49,7 +47,7 @@ async function createNg (params) {
   }
 }
 
-async function deleteNg (params) {
+export async function deleteNg (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -59,9 +57,3 @@ async function deleteNg (params) {
 
   Logger.println(`Network Group ${Formatter.formatString(networkGroupId)} deletion will be performed asynchronously.`);
 }
-
-module.exports = {
-  listNetworkGroups,
-  createNg,
-  deleteNg,
-};

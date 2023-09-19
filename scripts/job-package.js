@@ -1,11 +1,9 @@
-'use strict';
-
-const cfg = require('./config');
-const crypto = require('crypto');
-const del = require('del');
-const fs = require('fs-extra');
-const path = require('path');
-const { startTask, endTask, exec, applyTemplates, writeStringToFile } = require('./utils');
+import cfg from './config';
+import crypto from 'crypto';
+import del from 'del';
+import fs from 'fs-extra';
+import path from 'path';
+import { startTask, endTask, exec, applyTemplates, writeStringToFile } from './utils';
 
 async function run () {
 

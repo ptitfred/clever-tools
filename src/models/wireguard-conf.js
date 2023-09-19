@@ -1,25 +1,23 @@
-'use strict';
+import os from 'os';
+import { promises as fs, existsSync } from 'fs';
+import path from 'path';
 
-const os = require('os');
-const { promises: fs, existsSync } = require('fs');
-const path = require('path');
-
-const Logger = require('../logger.js');
-const Formatter = require('./format-string.js');
+import Logger from '../logger.js';
+import Formatter from './format-string.js';
 
 function getWgConfFolder () {
   // TODO: See if we can use runtime dirs
   return path.join(os.tmpdir(), 'com.clever-cloud.networkgroups');
 }
 
-async function createWgConfFolderIfNeeded () {
+export async function createWgConfFolderIfNeeded () {
   const confFolder = getWgConfFolder();
   if (!existsSync(confFolder)) {
     await fs.mkdir(confFolder);
   }
 }
 
-function getWgConfInformation (ngId) {
+export function getWgConfInformation (ngId) {
   const confName = `wgcc${ngId.slice(-8)}`;
   const confPath = path.join(getWgConfFolder(), `${confName}.conf`);
 
@@ -30,7 +28,7 @@ function getPeerIdPath (confName) {
   return path.join(getWgConfFolder(), `${confName}.id`);
 }
 
-async function storePeerId (peerId, confName) {
+export async function storePeerId (peerId, confName) {
   const filePath = getPeerIdPath(confName);
 
   try {
@@ -42,7 +40,7 @@ async function storePeerId (peerId, confName) {
   }
 }
 
-async function getPeerId (ngId) {
+export async function getPeerId (ngId) {
   const { confName } = getWgConfInformation(ngId);
   const filePath = getPeerIdPath(confName);
   if (existsSync(filePath)) {
@@ -55,7 +53,7 @@ async function getPeerId (ngId) {
   }
 }
 
-async function deletePeerIdFile (ngId) {
+export async function deletePeerIdFile (ngId) {
   const { confName } = getWgConfInformation(ngId);
   const filePath = getPeerIdPath(confName);
   // We need `force: true` to avoid errors if file doesn't exist
@@ -63,7 +61,7 @@ async function deletePeerIdFile (ngId) {
   Logger.info(`Deleted peer ID from ${Formatter.formatUrl(filePath)}`);
 }
 
-async function getInterfaceName (confName) {
+export async function getInterfaceName (confName) {
   // This file is created by WireGuard®, hence the file path (`/var/run/…`)
   // TODO: Handle Windows (not yet supported by `wg-quick` anyway)
   const interfaceNameFile = path.join('/var', 'run', 'wireguard', `${confName}.name`);
@@ -74,7 +72,7 @@ async function getInterfaceName (confName) {
   return interfaceName;
 }
 
-function confWithoutPlaceholders (conf, { privateKey }) {
+export function confWithoutPlaceholders (conf, { privateKey }) {
   conf = conf.replace('<%PrivateKey%>', privateKey);
 
   // TODO: This just removes leading and trailing new lines in the configuration file
@@ -83,13 +81,3 @@ function confWithoutPlaceholders (conf, { privateKey }) {
 
   return conf;
 }
-
-module.exports = {
-  createWgConfFolderIfNeeded,
-  getWgConfInformation,
-  storePeerId,
-  getPeerId,
-  deletePeerIdFile,
-  getInterfaceName,
-  confWithoutPlaceholders,
-};

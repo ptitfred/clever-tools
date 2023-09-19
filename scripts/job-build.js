@@ -1,10 +1,8 @@
-'use strict';
-
-const cfg = require('./config');
-const del = require('del');
-const fs = require('fs-extra');
+import cfg from './config';
+import del from 'del';
+import fs from 'fs-extra';
 const pkg = require('pkg').exec;
-const { startTask, endTask } = require('./utils');
+import { startTask, endTask } from './utils';
 
 async function run () {
 

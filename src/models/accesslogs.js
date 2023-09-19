@@ -1,8 +1,6 @@
-'use strict';
+import clfDate from 'clf-date';
 
-const clfDate = require('clf-date');
-
-function getFormatter (format, isAddon) {
+export function getFormatter (format, isAddon) {
   switch (format.toLowerCase()) {
     // "simple" is the legacy default, "human" is the new one
     case 'human':
@@ -50,5 +48,3 @@ function formatExtendedAddon (l) {
 function formatCLFAddon (l) {
   return `${l.ipS} - - [${clfDate(new Date(l.t))}] "- - -" - ${l.bOut}`;
 }
-
-module.exports = { getFormatter };

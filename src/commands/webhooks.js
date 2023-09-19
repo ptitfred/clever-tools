@@ -1,12 +1,10 @@
-'use strict';
+import colors from 'colors/safe';
 
-const colors = require('colors/safe');
+import Logger from '../logger.js';
+import { getOwnerAndApp, getOrgaIdOrUserId } from '../models/notification.js';
 
-const Logger = require('../logger.js');
-const { getOwnerAndApp, getOrgaIdOrUserId } = require('../models/notification.js');
-
-const { getWebhooks, createWebhook, deleteWebhook } = require('@clevercloud/client/cjs/api/v2/notification.js');
-const { sendToApi } = require('../models/send-to-api.js');
+import { getWebhooks, createWebhook, deleteWebhook } from '@clevercloud/client/cjs/api/v2/notification.js';
+import { sendToApi } from '../models/send-to-api.js';
 
 function displayWebhook (hook) {
   Logger.println((hook.name && colors.bold(hook.name)) || hook.id);
@@ -18,7 +16,7 @@ function displayWebhook (hook) {
   Logger.println();
 }
 
-async function list (params) {
+export async function list (params) {
   const { org, 'list-all': listAll } = params.options;
 
   // TODO: fix alias option
@@ -33,7 +31,7 @@ async function list (params) {
     .forEach((hook) => displayWebhook(hook));
 }
 
-async function add (params) {
+export async function add (params) {
   const { org, format, event: events, service } = params.options;
   const [name, hookUrl] = params.args;
 
@@ -52,7 +50,7 @@ async function add (params) {
   Logger.println('The webhook has been added');
 }
 
-async function remove (params) {
+export async function remove (params) {
   const { org } = params.options;
   const [notificationId] = params.args;
 
@@ -61,9 +59,3 @@ async function remove (params) {
 
   Logger.println('The notification has been successfully removed');
 }
-
-module.exports = {
-  list,
-  add,
-  remove,
-};

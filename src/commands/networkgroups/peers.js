@@ -1,15 +1,13 @@
-'use strict';
+import ngApi from '@clevercloud/client/cjs/api/v4/network-group.js';
 
-const ngApi = require('@clevercloud/client/cjs/api/v4/network-group.js');
+import { sendToApi } from '../../models/send-to-api.js';
 
-const { sendToApi } = require('../../models/send-to-api.js');
+import Logger from '../../logger.js';
+import NetworkGroup from '../../models/networkgroup.js';
+import Formatter from '../../models/format-string.js';
+import TableFormatter from '../../models/format-ng-table.js';
 
-const Logger = require('../../logger.js');
-const NetworkGroup = require('../../models/networkgroup.js');
-const Formatter = require('../../models/format-string.js');
-const TableFormatter = require('../../models/format-ng-table.js');
-
-async function listPeers (params) {
+export async function listPeers (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, json } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -33,7 +31,7 @@ async function listPeers (params) {
   }
 }
 
-async function getPeer (params) {
+export async function getPeer (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, 'peer-id': peerId, json } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -50,7 +48,7 @@ async function getPeer (params) {
   }
 }
 
-async function addExternalPeer (params) {
+export async function addExternalPeer (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, role, 'public-key': publicKey, label, parent, ip, port } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -64,7 +62,7 @@ async function addExternalPeer (params) {
   return peerId;
 }
 
-async function removeExternalPeer (params) {
+export async function removeExternalPeer (params) {
   const { org: orgaIdOrName, alias, ng: networkGroupIdOrLabel, 'peer-id': peerId } = params.options;
   const ownerId = await NetworkGroup.getOwnerId(orgaIdOrName, alias);
   const networkGroupId = await NetworkGroup.getId(ownerId, networkGroupIdOrLabel);
@@ -74,10 +72,3 @@ async function removeExternalPeer (params) {
 
   Logger.println(`External peer ${Formatter.formatString(peerId)} must have been removed from Network Group ${Formatter.formatString(networkGroupId)}.`);
 }
-
-module.exports = {
-  listPeers,
-  getPeer,
-  addExternalPeer,
-  removeExternalPeer,
-};
