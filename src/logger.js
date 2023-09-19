@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
 function getPrefix (severity) {
   const prefix = `[${severity.toUpperCase()}] `;
@@ -46,6 +46,8 @@ const Logger = _(['debug', 'info', 'warn', 'error'])
   })
   .fromPairs()
   .value();
+
+export default Logger;
 
 // No decoration for Logger.println
 Logger.println = console.log;

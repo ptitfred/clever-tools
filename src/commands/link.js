@@ -1,4 +1,4 @@
-import Application from '../models/application.js';
+import * as Application from '../models/application.js';
 import Logger from '../logger.js';
 
 export async function link (params) {

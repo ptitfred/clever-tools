@@ -2,8 +2,8 @@ import { getAccessLogsFromWarp10InBatches, getContinuousAccessLogsFromWarp10 } f
 import { getWarp10AccessLogsToken } from '@clevercloud/client/cjs/api/v2/warp-10.js';
 import { ONE_HOUR_MICROS, ONE_SECOND_MICROS, toMicroTimestamp } from '@clevercloud/client/cjs/utils/date.js';
 
-import Addon from '../models/addon.js';
-import AppConfig from '../models/app_configuration.js';
+import * as Addon from '../models/addon.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
 import { getFormatter } from '../models/accesslogs.js';
 import { sendToApi, sendToWarp10 } from '../models/send-to-api.js';

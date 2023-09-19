@@ -1,5 +1,5 @@
-import Application from '../models/application.js';
-import AppConfig from '../models/app_configuration.js';
+import * as Application from '../models/application.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
 
 export async function create (params) {

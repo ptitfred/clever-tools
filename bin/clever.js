@@ -17,12 +17,11 @@ import cliparseCommands from 'cliparse/src/command.js';
 import updateNotifier from 'update-notifier';
 import _sortBy from 'lodash/sortBy.js';
 
-import git from '../src/models/git.js';
-import Parsers from '../src/parsers.js';
+import * as git from '../src/models/git.js';
+import * as Parsers from '../src/parsers.js';
 import handleCommandPromise from '../src/command-promise-handler.js';
-import Formatter from '../src/models/format-string.js';
+import * as Formatter from '../src/models/format-string.js';
 import { getOutputFormatOption } from '../src/get-output-format-option.js';
-
 // Exit cleanly if the program we pipe to exits abruptly
 process.stdout.on('error', (error) => {
   if (error.code === 'EPIPE') {
@@ -30,7 +29,7 @@ process.stdout.on('error', (error) => {
   }
 });
 
-import pkg from '../package.json';
+import pkg from '../package.json' assert { type: 'json' };
 
 if (process.pkg == null) {
   updateNotifier({
@@ -54,13 +53,49 @@ cliparse.command = function (name, options, cb) {
   });
 };
 
-import Addon from '../src/models/addon.js';
-import Application from '../src/models/application.js';
-import ApplicationConfiguration from '../src/models/application_configuration.js';
-import Drain from '../src/models/drain.js';
-import Notification from '../src/models/notification.js';
-import Organisation from '../src/models/organisation.js';
-import NetworkGroup from '../src/models/networkgroup.js';
+import * as Addon from '../src/models/addon.js';
+import * as Application from '../src/models/application.js';
+import * as ApplicationConfiguration from '../src/models/application_configuration.js';
+import * as Drain from '../src/models/drain.js';
+import * as Notification from '../src/models/notification.js';
+import * as Organisation from '../src/models/organisation.js';
+import * as NetworkGroup from '../src/models/networkgroup.js';
+
+import * as accesslogsModule from '../src/commands/accesslogs.js';
+import * as activity from '../src/commands/activity.js';
+import * as addon from '../src/commands/addon.js';
+import * as applications from '../src/commands/applications.js';
+import * as cancelDeploy from '../src/commands/cancel-deploy.js';
+import * as config from '../src/commands/config.js';
+import * as create from '../src/commands/create.js';
+import * as deleteCommandModule from '../src/commands/delete.js';
+import * as deploy from '../src/commands/deploy.js';
+import * as diag from '../src/commands/diag.js';
+import * as domain from '../src/commands/domain.js';
+import * as drain from '../src/commands/drain.js';
+import * as env from '../src/commands/env.js';
+import * as link from '../src/commands/link.js';
+import * as login from '../src/commands/login.js';
+import * as logout from '../src/commands/logout.js';
+import * as logs from '../src/commands/logs.js';
+import * as makeDefault from '../src/commands/makeDefault.js';
+// import * as networkgroups from '../src/commands/networkgroups/commands.js';
+import * as notifyEmail from '../src/commands/notify-email.js';
+import * as open from '../src/commands/open.js';
+import * as consoleModule from '../src/commands/console.js';
+import * as profile from '../src/commands/profile.js';
+import * as publishedConfig from '../src/commands/published-config.js';
+import * as restart from '../src/commands/restart.js';
+import * as scale from '../src/commands/scale.js';
+import * as service from '../src/commands/service.js';
+import * as ssh from '../src/commands/ssh.js';
+import * as status from '../src/commands/status.js';
+import * as stop from '../src/commands/stop.js';
+import * as tcpRedirs from '../src/commands/tcp-redirs.js';
+import * as unlink from '../src/commands/unlink.js';
+import * as version from '../src/commands/version.js';
+import * as webhooks from '../src/commands/webhooks.js';
+import * as database from '../src/commands/database.js';
 
 function run () {
 
@@ -414,25 +449,25 @@ function run () {
       complete: NetworkGroup.listAvailablePeerRoles,
     }),
     // FIXME: Add "internal" member type
-    ngMemberType: cliparse.option('type', {
-      required: true,
-      metavar: 'member_type',
-      description: `The member type (${Formatter.formatString('application')}, ${Formatter.formatString('addon')} or ${Formatter.formatString('external')})`,
-      parser: Parsers.ngMemberType,
-      complete: NetworkGroup.listAvailableMemberTypes,
-    }),
-    ngMemberLabel: cliparse.option('label', {
-      required: true,
-      metavar: 'member_label',
-      description: 'Network Group member label',
-    }),
-    ngNodeCategoryId: cliparse.option('node-category-id', {
-      required: true,
-      aliases: ['c'],
-      metavar: 'node_category_id',
-      description: 'The external node category ID',
-      // complete: NetworkGroup.xxx,
-    }),
+    // ngMemberType: cliparse.option('type', {
+    //   required: true,
+    //   metavar: 'member_type',
+    //   description: `The member type (${Formatter.formatString('application')}, ${Formatter.formatString('addon')} or ${Formatter.formatString('external')})`,
+    //   parser: Parsers.ngMemberType,
+    //   complete: NetworkGroup.listAvailableMemberTypes,
+    // }),
+    // ngMemberLabel: cliparse.option('label', {
+    //   required: true,
+    //   metavar: 'member_label',
+    //   description: 'Network Group member label',
+    // }),
+    // ngNodeCategoryId: cliparse.option('node-category-id', {
+    //   required: true,
+    //   aliases: ['c'],
+    //   metavar: 'node_category_id',
+    //   description: 'The external node category ID',
+    //   // complete: NetworkGroup.xxx,
+    // }),
     ngPeerLabel: cliparse.option('label', {
       required: true,
       metavar: 'peer_label',
@@ -469,14 +504,14 @@ function run () {
       description: 'The peer ID',
       // complete: NetworkGroup.xxx,
     }),
-    optNgPeerRole: cliparse.option('role', {
-      required: false,
-      default: 'client',
-      metavar: 'peer_role',
-      description: `The peer role, (${Formatter.formatString('client')} or ${Formatter.formatString('server')})`,
-      parser: Parsers.ngPeerRole,
-      complete: NetworkGroup.listAvailablePeerRoles,
-    }),
+    // optNgPeerRole: cliparse.option('role', {
+    //   required: false,
+    //   default: 'client',
+    //   metavar: 'peer_role',
+    //   description: `The peer role, (${Formatter.formatString('client')} or ${Formatter.formatString('server')})`,
+    //   parser: Parsers.ngPeerRole,
+    //   complete: NetworkGroup.listAvailablePeerRoles,
+    // }),
     optNgSearchAppId: cliparse.option('app-id', {
       required: false,
       metavar: 'app_id',
@@ -526,21 +561,18 @@ function run () {
   };
 
   // ACCESSLOGS COMMAND
-  const accesslogsModule = require('../src/commands/accesslogs.js');
   const accesslogsCommand = cliparse.command('accesslogs', {
     description: 'Fetch access logs',
     options: [opts.alias, opts.accesslogsFormat, opts.before, opts.after, opts.accesslogsFollow, opts.addonId],
   }, accesslogsModule.accessLogs);
 
   // ACTIVITY COMMAND
-  const activity = require('../src/commands/activity.js');
   const activityCommand = cliparse.command('activity', {
     description: 'Show last deployments of a Clever Cloud application',
     options: [opts.alias, opts.follow, opts.showAllActivity],
   }, activity.activity);
 
   // ADDON COMMANDS
-  const addon = require('../src/commands/addon.js');
   const addonCreateCommand = cliparse.command('create', {
     description: 'Create an addon',
     args: [args.addonProvider, args.addonName],
@@ -576,21 +608,18 @@ function run () {
   }, addon.list);
 
   // APPLICATIONS COMMAND
-  const applications = require('../src/commands/applications.js');
   const applicationsCommand = cliparse.command('applications', {
     description: 'List linked applications',
     options: [opts.onlyAliases, opts.jsonFormat],
   }, applications.list);
 
   // CANCEL DEPLOY COMMAND
-  const cancelDeploy = require('../src/commands/cancel-deploy.js');
   const cancelDeployCommand = cliparse.command('cancel-deploy', {
     description: 'Cancel an ongoing deployment on Clever Cloud',
     options: [opts.alias],
   }, cancelDeploy.cancelDeploy);
 
   // CONFIG COMMAND
-  const config = require('../src/commands/config.js');
   const configGetCommand = cliparse.command('get', {
     description: 'Display the current configuration',
     args: [args.configurationName],
@@ -610,7 +639,6 @@ function run () {
   }, config.get);
 
   // CREATE COMMAND
-  const create = require('../src/commands/create.js');
   const appCreateCommand = cliparse.command('create', {
     description: 'Create a Clever Cloud application',
     args: [args.appNameCreation],
@@ -618,28 +646,24 @@ function run () {
   }, create.create);
 
   // DELETE COMMAND
-  const deleteCommandModule = require('../src/commands/delete.js');
   const deleteCommand = cliparse.command('delete', {
     description: 'Delete a Clever Cloud application',
     options: [opts.alias, opts.confirmApplicationDeletion],
   }, deleteCommandModule.deleteApp);
 
   // DEPLOY COMMAND
-  const deploy = require('../src/commands/deploy.js');
   const deployCommand = cliparse.command('deploy', {
     description: 'Deploy an application to Clever Cloud',
     options: [opts.alias, opts.branch, opts.quiet, opts.forceDeploy, opts.followDeployLogs],
   }, deploy.deploy);
 
   // DIAG COMMAND
-  const diag = require('../src/commands/diag.js');
   const diagCommand = cliparse.command('diag', {
     description: 'Diagnose the current installation (prints various informations for support)',
     args: [],
   }, diag.diag);
 
   // DOMAIN COMMANDS
-  const domain = require('../src/commands/domain.js');
   const domainCreateCommand = cliparse.command('add', {
     description: 'Add a domain name to a Clever Cloud application',
     args: [args.fqdn],
@@ -666,7 +690,6 @@ function run () {
   }, domain.list);
 
   // DRAIN COMMANDS
-  const drain = require('../src/commands/drain.js');
   const drainCreateCommand = cliparse.command('create', {
     description: 'Create a drain',
     args: [args.drainType, args.drainUrl],
@@ -691,7 +714,6 @@ function run () {
   }, drain.list);
 
   // ENV COMMANDS
-  const env = require('../src/commands/env.js');
   const envSetCommand = cliparse.command('set', {
     description: 'Add or update an environment variable named <variable-name> with the value <variable-value>',
     args: [args.envVariableName, args.envVariableValue],
@@ -715,7 +737,6 @@ function run () {
   }, env.list);
 
   // LINK COMMAND
-  const link = require('../src/commands/link.js');
   const appLinkCommand = cliparse.command('link', {
     description: 'Link this repo to an existing Clever Cloud application',
     args: [args.appIdOrName],
@@ -723,112 +744,106 @@ function run () {
   }, link.link);
 
   // LOGIN COMMAND
-  const login = require('../src/commands/login.js');
   const loginCommand = cliparse.command('login', {
     description: 'Login to Clever Cloud',
     options: [opts.loginToken, opts.loginSecret],
   }, login.login);
 
   // LOGOUT COMMAND
-  const logout = require('../src/commands/logout.js');
   const logoutCommand = cliparse.command('logout', {
     description: 'Logout from Clever Cloud',
   }, logout.logout);
 
   // LOGS COMMAND
-  const logs = require('../src/commands/logs.js');
   const logsCommand = cliparse.command('logs', {
     description: 'Fetch application logs, continuously',
     options: [opts.alias, opts.before, opts.after, opts.search, opts.deploymentId, opts.addonId],
   }, logs.appLogs);
 
   // MAKE DEFAULT COMMAND
-  const makeDefault = require('../src/commands/makeDefault.js');
   const makeDefaultCommand = cliparse.command('make-default', {
     description: 'Make a linked application the default one',
     args: [args.alias],
   }, makeDefault.makeDefault);
 
   // NETWORK GROUPS COMMANDS
-  const networkgroups = require('../src/commands/networkgroups/commands.js');
 
   // network group category - start
-  const networkGroupsListCommand = cliparse.command('list', {
-    description: 'List Network Groups with their labels',
-    options: [opts.jsonFormat],
-  }, networkgroups.listNetworkGroups);
-  const networkGroupsCreateCommand = cliparse.command('create', {
-    description: 'Create a Network Group',
-    options: [opts.ngLabel, opts.ngDescription, opts.optTags, opts.jsonFormat],
-  }, networkgroups.createNg);
-  const networkGroupsDeleteCommand = cliparse.command('delete', {
-    description: 'Delete a Network Group',
-    options: [opts.ngIdOrLabel],
-  }, networkgroups.deleteNg);
-  // network group category - end
+  // const networkGroupsListCommand = cliparse.command('list', {
+  //   description: 'List Network Groups with their labels',
+  //   options: [opts.jsonFormat],
+  // }, networkgroups.listNetworkGroups);
+  // const networkGroupsCreateCommand = cliparse.command('create', {
+  //   description: 'Create a Network Group',
+  //   options: [opts.ngLabel, opts.ngDescription, opts.optTags, opts.jsonFormat],
+  // }, networkgroups.createNg);
+  // const networkGroupsDeleteCommand = cliparse.command('delete', {
+  //   description: 'Delete a Network Group',
+  //   options: [opts.ngIdOrLabel],
+  // }, networkgroups.deleteNg);
+  // // network group category - end
 
-  // member category - start
-  const networkGroupsMemberListCommand = cliparse.command('list', {
-    description: 'List members of a Network Group',
-    // Add option opts.optNgSearchAppId ?
-    options: [opts.ngIdOrLabel, opts.naturalName, opts.jsonFormat],
-  }, networkgroups.listMembers);
-  const networkGroupsMemberGetCommand = cliparse.command('get', {
-    description: 'Get a Network Group member details',
-    options: [opts.ngIdOrLabel, opts.ngMemberId, opts.naturalName, opts.jsonFormat],
-  }, networkgroups.getMember);
-  const networkGroupsMemberAddCommand = cliparse.command('add', {
-    description: 'Add an app or addon as a Network Group member',
-    options: [opts.ngIdOrLabel, opts.ngMemberId, opts.ngMemberType, opts.ngMemberDomainName, opts.optNgMemberLabel],
-  }, networkgroups.addMember);
-  const networkGroupsMemberRemoveCommand = cliparse.command('remove', {
-    description: 'Remove an app or addon from a Network Group',
-    options: [opts.ngIdOrLabel, opts.ngMemberId],
-  }, networkgroups.removeMember);
+  // // member category - start
+  // const networkGroupsMemberListCommand = cliparse.command('list', {
+  //   description: 'List members of a Network Group',
+  //   // Add option opts.optNgSearchAppId ?
+  //   options: [opts.ngIdOrLabel, opts.naturalName, opts.jsonFormat],
+  // }, networkgroups.listMembers);
+  // const networkGroupsMemberGetCommand = cliparse.command('get', {
+  //   description: 'Get a Network Group member details',
+  //   options: [opts.ngIdOrLabel, opts.ngMemberId, opts.naturalName, opts.jsonFormat],
+  // }, networkgroups.getMember);
+  // const networkGroupsMemberAddCommand = cliparse.command('add', {
+  //   description: 'Add an app or addon as a Network Group member',
+  //   options: [opts.ngIdOrLabel, opts.ngMemberId, opts.ngMemberType, opts.ngMemberDomainName, opts.optNgMemberLabel],
+  // }, networkgroups.addMember);
+  // const networkGroupsMemberRemoveCommand = cliparse.command('remove', {
+  //   description: 'Remove an app or addon from a Network Group',
+  //   options: [opts.ngIdOrLabel, opts.ngMemberId],
+  // }, networkgroups.removeMember);
+  //
+  // const networkGroupsMembersCategoryCommand = cliparse.command('members', {
+  //   description: 'List commands for interacting with Network Group members',
+  //   commands: [networkGroupsMemberListCommand, networkGroupsMemberGetCommand, networkGroupsMemberAddCommand, networkGroupsMemberRemoveCommand],
+  // });
+  // // member category - end
 
-  const networkGroupsMembersCategoryCommand = cliparse.command('members', {
-    description: 'List commands for interacting with Network Group members',
-    commands: [networkGroupsMemberListCommand, networkGroupsMemberGetCommand, networkGroupsMemberAddCommand, networkGroupsMemberRemoveCommand],
-  });
-  // member category - end
+  // // peer category - start
+  // const networkGroupsPeerListCommand = cliparse.command('list', {
+  //   description: 'List peers of a Network Group',
+  //   options: [opts.ngIdOrLabel, opts.jsonFormat],
+  // }, networkgroups.listPeers);
+  // const networkGroupsPeerGetCommand = cliparse.command('get', {
+  //   description: 'Get a Network Group peer details',
+  //   options: [opts.ngIdOrLabel, opts.ngPeerId, opts.jsonFormat],
+  // }, networkgroups.getPeer);
+  // const networkGroupsPeerAddCommand = cliparse.command('add-external', {
+  //   description: 'Add an external node as a Network Group peer',
+  //   options: [opts.ngIdOrLabel, opts.ngPeerRole, opts.wgPublicKey, opts.ngPeerLabel, opts.ngPeerParentMemberId],
+  // }, networkgroups.addExternalPeer);
+  // const networkGroupsPeerRemoveExternalCommand = cliparse.command('remove-external', {
+  //   description: 'Remove an external node from a Network Group',
+  //   options: [opts.ngIdOrLabel, opts.ngPeerId],
+  // }, networkgroups.removeExternalPeer);
 
-  // peer category - start
-  const networkGroupsPeerListCommand = cliparse.command('list', {
-    description: 'List peers of a Network Group',
-    options: [opts.ngIdOrLabel, opts.jsonFormat],
-  }, networkgroups.listPeers);
-  const networkGroupsPeerGetCommand = cliparse.command('get', {
-    description: 'Get a Network Group peer details',
-    options: [opts.ngIdOrLabel, opts.ngPeerId, opts.jsonFormat],
-  }, networkgroups.getPeer);
-  const networkGroupsPeerAddCommand = cliparse.command('add-external', {
-    description: 'Add an external node as a Network Group peer',
-    options: [opts.ngIdOrLabel, opts.ngPeerRole, opts.wgPublicKey, opts.ngPeerLabel, opts.ngPeerParentMemberId],
-  }, networkgroups.addExternalPeer);
-  const networkGroupsPeerRemoveExternalCommand = cliparse.command('remove-external', {
-    description: 'Remove an external node from a Network Group',
-    options: [opts.ngIdOrLabel, opts.ngPeerId],
-  }, networkgroups.removeExternalPeer);
-
-  const networkGroupsPeersCategoryCommand = cliparse.command('peers', {
-    description: 'List commands for interacting with Network Group peers',
-    commands: [networkGroupsPeerListCommand, networkGroupsPeerGetCommand, networkGroupsPeerAddCommand, networkGroupsPeerRemoveExternalCommand],
-  });
+  // const networkGroupsPeersCategoryCommand = cliparse.command('peers', {
+  //   description: 'List commands for interacting with Network Group peers',
+  //   commands: [networkGroupsPeerListCommand, networkGroupsPeerGetCommand, networkGroupsPeerAddCommand, networkGroupsPeerRemoveExternalCommand],
+  // });
   // peer category - end
 
-  const networkGroupsCommand = cliparse.command('networkgroups', {
-    description: 'List Network Group commands',
-    options: [opts.orgaIdOrName, opts.alias],
-    commands: [networkGroupsListCommand, networkGroupsCreateCommand, networkGroupsDeleteCommand, networkGroupsMembersCategoryCommand, networkGroupsPeersCategoryCommand],
-  });
-  const ngCommand = cliparse.command('ng', {
-    description: `Alias for ${Formatter.formatCommand('clever networkgroups')}`,
-    options: [opts.orgaIdOrName, opts.alias],
-    commands: [networkGroupsListCommand, networkGroupsCreateCommand, networkGroupsDeleteCommand, networkGroupsMembersCategoryCommand, networkGroupsPeersCategoryCommand],
-  });
+  // const networkGroupsCommand = cliparse.command('networkgroups', {
+  //   description: 'List Network Group commands',
+  //   options: [opts.orgaIdOrName, opts.alias],
+  //   commands: [networkGroupsListCommand, networkGroupsCreateCommand, networkGroupsDeleteCommand, networkGroupsMembersCategoryCommand, networkGroupsPeersCategoryCommand],
+  // });
+  // const ngCommand = cliparse.command('ng', {
+  //   description: `Alias for ${Formatter.formatCommand('clever networkgroups')}`,
+  //   options: [opts.orgaIdOrName, opts.alias],
+  //   commands: [networkGroupsListCommand, networkGroupsCreateCommand, networkGroupsDeleteCommand, networkGroupsMembersCategoryCommand, networkGroupsPeersCategoryCommand],
+  // });
 
   // NOTIFY-EMAIL COMMAND
-  const notifyEmail = require('../src/commands/notify-email.js');
   const addEmailNotificationCommand = cliparse.command('add', {
     description: 'Add a new email notification',
     options: [opts.notificationEventType, opts.notificationScope, opts.emailNotificationTarget],
@@ -845,27 +860,23 @@ function run () {
   }, notifyEmail.list);
 
   // OPEN COMMAND
-  const open = require('../src/commands/open.js');
   const openCommand = cliparse.command('open', {
     description: 'Open an application in the browser',
     options: [opts.alias],
   }, open.open);
 
   // CONSOLE COMMAND
-  const consoleModule = require('../src/commands/console.js');
   const consoleCommand = cliparse.command('console', {
     description: 'Open an application in the console',
     options: [opts.alias],
   }, consoleModule.openConsole);
 
   // PROFILE COMMAND
-  const profile = require('../src/commands/profile.js');
   const profileCommand = cliparse.command('profile', {
     description: 'Display the profile of the current user',
   }, profile.profile);
 
   // PUBLISHED CONFIG COMMANDS
-  const publishedConfig = require('../src/commands/published-config.js');
   const publishedConfigSetCommand = cliparse.command('set', {
     description: 'Add or update a published configuration item named <variable-name> with the value <variable-value>',
     args: [args.envVariableName, args.envVariableValue],
@@ -885,21 +896,18 @@ function run () {
   }, publishedConfig.list);
 
   // RESTART COMMAND
-  const restart = require('../src/commands/restart.js');
   const restartCommand = cliparse.command('restart', {
     description: 'Start or restart a Clever Cloud application',
     options: [opts.alias, opts.commit, opts.withoutCache, opts.quiet, opts.followDeployLogs],
   }, restart.restart);
 
   // SCALE COMMAND
-  const scale = require('../src/commands/scale.js');
   const scaleCommand = cliparse.command('scale', {
     description: 'Change scalability of an application',
     options: [opts.alias, opts.flavor, opts.minFlavor, opts.maxFlavor, opts.instances, opts.minInstances, opts.maxInstances, opts.buildFlavor],
   }, scale.scale);
 
   // SERVICE COMMANDS
-  const service = require('../src/commands/service.js');
   const serviceLinkAppCommand = cliparse.command('link-app', {
     description: 'Add an existing app as a dependency',
     args: [args.appIdOrName],
@@ -923,28 +931,24 @@ function run () {
   }, service.list);
 
   // SSH COMMAND
-  const ssh = require('../src/commands/ssh.js');
   const sshCommand = cliparse.command('ssh', {
     description: 'Connect to running instances through SSH',
     options: [opts.alias, opts.sshIdentityFile],
   }, ssh.ssh);
 
   // STATUS COMMAND
-  const status = require('../src/commands/status.js');
   const statusCommand = cliparse.command('status', {
     description: 'See the status of an application on Clever Cloud',
     options: [opts.alias],
   }, status.status);
 
   // STOP COMMAND
-  const stop = require('../src/commands/stop.js');
   const stopCommand = cliparse.command('stop', {
     description: 'Stop a running application on Clever Cloud',
     options: [opts.alias],
   }, stop.stop);
 
   // TCP-REDIRS COMMAND
-  const tcpRedirs = require('../src/commands/tcp-redirs.js');
   const tcpRedirsListNamespacesCommand = cliparse.command('list-namespaces', {
     description: 'List the namespaces in which you can create new TCP redirections',
   }, tcpRedirs.listNamespaces);
@@ -964,21 +968,18 @@ function run () {
   }, tcpRedirs.list);
 
   // UNLINK COMMAND
-  const unlink = require('../src/commands/unlink.js');
   const appUnlinkCommand = cliparse.command('unlink', {
     description: 'Unlink this repo from an existing Clever Cloud application',
     args: [args.alias],
   }, unlink.unlink);
 
   // VERSION COMMAND
-  const version = require('../src/commands/version.js');
   const versionCommand = cliparse.command('version', {
     description: 'Display the version',
     args: [],
   }, version.version);
 
   // WEBHOOKS COMMAND
-  const webhooks = require('../src/commands/webhooks.js');
   const addWebhookCommand = cliparse.command('add', {
     description: 'Register webhook to be called when events happen',
     options: [opts.webhookFormat, opts.notificationEventType, opts.notificationScope],
@@ -995,7 +996,6 @@ function run () {
   }, webhooks.list);
 
   // DATABASES COMMANDS
-  const database = require('../src/commands/database.js');
   const downloadBackupCommand = cliparse.command('download', {
     description: 'Download a database backup',
     args: [args.databaseId, args.backupId],

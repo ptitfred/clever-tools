@@ -1,7 +1,7 @@
 import cliparse from 'cliparse';
 
-import AccessLogs from './models/accesslogs.js';
-import Application from './models/application.js';
+import * as AccessLogs from './models/accesslogs.js';
+import * as Application from './models/application.js';
 
 export function flavor (flavor) {
   const flavors = Application.listAvailableFlavors();

@@ -1,7 +1,7 @@
 import _ from 'lodash';
-const autocomplete = require('cliparse').autocomplete;
+import cliparse from 'cliparse';
 
-import AppConfig from './app_configuration.js';
+import * as AppConfig from './app_configuration.js';
 
 import organisation from '@clevercloud/client/cjs/api/v2/organisation.js';
 import { getSummary } from '@clevercloud/client/cjs/api/v2/user.js';
@@ -46,5 +46,5 @@ export function completeNamespaces () {
   // Sadly we do not have access to current params in complete as of now
   const params = { options: {} };
 
-  return getNamespaces(params).then(autocomplete.words);
+  return getNamespaces(params).then(cliparse.autocomplete.words);
 };

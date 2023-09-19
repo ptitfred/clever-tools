@@ -1,6 +1,6 @@
-import Addon from '../models/addon.js';
-import AppConfig from '../models/app_configuration.js';
-import Application from '../models/application.js';
+import * as Addon from '../models/addon.js';
+import * as AppConfig from '../models/app_configuration.js';
+import * as Application from '../models/application.js';
 import Logger from '../logger.js';
 
 export async function list (params) {

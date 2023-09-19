@@ -85,7 +85,7 @@ export async function writeIdsCache (ids) {
   }
 }
 
-const conf = env.getOrElseAll({
+export const conf = env.getOrElseAll({
   API_HOST: 'https://api.clever-cloud.com',
   // API_HOST: 'https://ccapi-preprod.cleverapps.io',
   LOG_WS_URL: 'wss://api.clever-cloud.com/v2/logs/logs-socket/<%- appId %>?since=<%- timestamp %>',

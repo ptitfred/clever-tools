@@ -1,9 +1,9 @@
-import AppConfig from '../models/app_configuration.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
-import variables from '../models/variables.js';
+import * as variables from '../models/variables.js';
 import { sendToApi } from '../models/send-to-api.js';
 import { toNameEqualsValueString, validateName } from '@clevercloud/client/cjs/utils/env-vars.js';
-import application from '@clevercloud/client/cjs/api/v2/application.js';
+import * as Application from '@clevercloud/client/cjs/api/v2/application.js';
 
 export async function list (params) {
   const { alias } = params.options;

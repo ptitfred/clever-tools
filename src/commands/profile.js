@@ -1,7 +1,7 @@
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
 import Logger from '../logger.js';
-import User from '../models/user.js';
+import * as User from '../models/user.js';
 
 export async function profile () {
   const { id, name, email, preferredMFA } = await User.getCurrent();

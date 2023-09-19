@@ -1,4 +1,4 @@
-import AppConfig from '../models/app_configuration.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
 import { getAllDeployments, cancelDeployment } from '@clevercloud/client/cjs/api/v2/application.js';
 import { sendToApi } from '../models/send-to-api.js';

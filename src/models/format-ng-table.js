@@ -1,7 +1,7 @@
 import formatNgTable from '../format-table.js';
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
-import AppConfig from './app_configuration.js';
+import * as AppConfig from './app_configuration.js';
 import Logger from '../logger.js';
 import Formatter from './format-string.js';
 

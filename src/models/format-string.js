@@ -1,4 +1,4 @@
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
 export function formatId (id) {
   return colors.dim(id);

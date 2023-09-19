@@ -1,4 +1,4 @@
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
 import Logger from '../logger.js';
 import { getOwnerAndApp, getOrgaIdOrUserId } from '../models/notification.js';

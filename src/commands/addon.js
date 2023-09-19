@@ -1,17 +1,19 @@
 import _ from 'lodash';
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
-import Addon from '../models/addon.js';
-import AppConfig from '../models/app_configuration.js';
-const formatTable = require('../format-table')();
+import * as Addon from '../models/addon.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
-import Organisation from '../models/organisation.js';
-import User from '../models/user.js';
+import * as Organisation from '../models/organisation.js';
+import * as User from '../models/user.js';
 import { parseAddonOptions, findOwnerId } from '../models/addon.js';
 import { getAllEnvVars } from '@clevercloud/client/cjs/api/v2/addon.js';
 import { sendToApi } from '../models/send-to-api.js';
 import { toNameEqualsValueString } from '@clevercloud/client/cjs/utils/env-vars.js';
 import { resolveAddonId } from '../models/ids-resolver.js';
+import formatTableModule from '../format-table.js';
+
+const formatTable = formatTableModule();
 
 export async function list (params) {
   const { org: orgaIdOrName } = params.options;

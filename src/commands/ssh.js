@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 
-import AppConfig from '../models/app_configuration.js';
+import * as AppConfig from '../models/app_configuration.js';
 import { conf } from '../models/configuration.js';
 
 export async function ssh (params) {

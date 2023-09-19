@@ -1,9 +1,9 @@
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
-import AppConfig from '../models/app_configuration.js';
-import Application from '../models/application.js';
-import git from '../models/git.js';
-import Log from '../models/log.js';
+import * as AppConfig from '../models/app_configuration.js';
+import * as Application from '../models/application.js';
+import * as git from '../models/git.js';
+import * as Log from '../models/log.js';
 import Logger from '../logger.js';
 import { getAllDeployments } from '@clevercloud/client/cjs/api/v2/application.js';
 import { sendToApi } from '../models/send-to-api.js';

@@ -1,4 +1,4 @@
-import AppConfig from '../models/app_configuration.js';
+import * as AppConfig from '../models/app_configuration.js';
 import { createDrainBody } from '../models/drain.js';
 import Logger from '../logger.js';
 

@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
-import AppConfig from '../models/app_configuration.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
 
 import { get as getApplication, getAllInstances } from '@clevercloud/client/cjs/api/v2/application.js';

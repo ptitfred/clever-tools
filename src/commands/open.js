@@ -1,7 +1,7 @@
 import openPage from 'open';
 
-import AppConfig from '../models/app_configuration.js';
-import Domain from '../models/domain.js';
+import * as AppConfig from '../models/app_configuration.js';
+import * as Domain from '../models/domain.js';
 import Logger from '../logger.js';
 
 export async function open (params) {

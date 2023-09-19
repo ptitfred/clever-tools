@@ -3,8 +3,8 @@ import path from 'path';
 
 import _ from 'lodash';
 import git from 'isomorphic-git';
-import http from 'isomorphic-git/http/node';
-import { autocomplete } from 'cliparse';
+import http from 'isomorphic-git/http/node/index.cjs';
+import cliparse from 'cliparse';
 
 import slugify from 'slugify';
 import { findPath } from './fs-utils.js';
@@ -106,7 +106,7 @@ export async function push (remoteUrl, branchRefspec, force) {
 export function completeBranches () {
   return getRepo()
     .then((repo) => git.listBranches(repo))
-    .then(autocomplete.words);
+    .then(cliparse.autocomplete.words);
 }
 
 export async function isShallow () {

@@ -1,4 +1,4 @@
-import AppConfig from '../models/app_configuration.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
 import { get as getApp, addDomain, getFavouriteDomain as getFavouriteDomainWithError, markFavouriteDomain, unmarkFavouriteDomain, removeDomain } from '@clevercloud/client/cjs/api/v2/application.js';
 import { sendToApi } from '../models/send-to-api.js';

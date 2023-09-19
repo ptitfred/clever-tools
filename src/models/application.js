@@ -1,26 +1,26 @@
 import _ from 'lodash';
-import application from '@clevercloud/client/cjs/api/v2/application.js';
-const autocomplete = require('cliparse').autocomplete;
+import * as Application from '@clevercloud/client/cjs/api/v2/application.js';
+import cliparse from 'cliparse';
 import product from '@clevercloud/client/cjs/api/v2/product.js';
 
-import AppConfiguration from './app_configuration.js';
-import Interact from './interact.js';
+import * as AppConfiguration from './app_configuration.js';
+import * as Interact from './interact.js';
 import Logger from '../logger.js';
-import Organisation from './organisation.js';
-import User from './user.js';
+import * as Organisation from './organisation.js';
+import * as User from './user.js';
 
 import { sendToApi } from '../models/send-to-api.js';
 
 export function listAvailableTypes () {
-  return autocomplete.words(['docker', 'elixir', 'go', 'gradle', 'haskell', 'jar', 'maven', 'node', 'php', 'play1', 'play2', 'python', 'ruby', 'rust', 'sbt', 'static-apache', 'war']);
+  return cliparse.autocomplete.words(['docker', 'elixir', 'go', 'gradle', 'haskell', 'jar', 'maven', 'node', 'php', 'play1', 'play2', 'python', 'ruby', 'rust', 'sbt', 'static-apache', 'war']);
 };
 
 export function listAvailableZones () {
-  return autocomplete.words(['par', 'mtl']);
+  return cliparse.autocomplete.words(['par', 'mtl']);
 };
 
 export function listAvailableAliases () {
-  return AppConfiguration.loadApplicationConf().then(({ apps }) => autocomplete.words(_.map(apps, 'alias')));
+  return AppConfiguration.loadApplicationConf().then(({ apps }) => cliparse.autocomplete.words(_.map(apps, 'alias')));
 };
 
 export function listAvailableFlavors () {

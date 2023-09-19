@@ -1,7 +1,7 @@
-const autocomplete = require('cliparse').autocomplete;
-import Organisation from '../models/organisation.js';
-import User from '../models/user.js';
-import AppConfig from './app_configuration.js';
+import cliparse from 'cliparse';
+import * as Organisation from '../models/organisation.js';
+import * as User from '../models/user.js';
+import * as AppConfig from './app_configuration.js';
 import ngApi from '@clevercloud/client/cjs/api/v4/network-group.js';
 import { sendToApi } from './send-to-api.js';
 
@@ -47,9 +47,9 @@ async function getByLabel (owner_id, label) {
 }
 
 export function listAvailablePeerRoles () {
-  return autocomplete.words(['client', 'server']);
+  return cliparse.autocomplete.words(['client', 'server']);
 }
 
 export function listAvailableMemberTypes () {
-  return autocomplete.words(['application', 'addon', 'external']);
+  return cliparse.autocomplete.words(['application', 'addon', 'external']);
 }

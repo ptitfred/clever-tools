@@ -1,11 +1,11 @@
-import application from '@clevercloud/client/cjs/api/v2/application.js';
-const autocomplete = require('cliparse').autocomplete;
+import * as Application from '@clevercloud/client/cjs/api/v2/application.js';
+import cliparse from 'cliparse';
 import { get as getAddon, getAll as getAllAddons, remove as removeAddon, create as createAddon, update as updateAddon } from '@clevercloud/client/cjs/api/v2/addon.js';
 import { getAllAddonProviders } from '@clevercloud/client/cjs/api/v2/product.js';
 import { getSummary } from '@clevercloud/client/cjs/api/v2/user.js';
 import { getAddonProvider } from '@clevercloud/client/cjs/api/v4/addon-providers.js';
 
-import Interact from './interact.js';
+import * as Interact from './interact.js';
 import Logger from '../logger.js';
 import { sendToApi } from '../models/send-to-api.js';
 import { resolveOwnerId } from './ids-resolver.js';
@@ -216,12 +216,12 @@ export async function rename (ownerId, addon, name) {
 }
 
 export function completeRegion () {
-  return autocomplete.words(['par', 'mtl']);
+  return cliparse.autocomplete.words(['par', 'mtl']);
 }
 
 // TODO: We need to fix this
 export function completePlan () {
-  return autocomplete.words(['dev', 's', 'm', 'l', 'xl', 'xxl']);
+  return cliparse.autocomplete.words(['dev', 's', 'm', 'l', 'xl', 'xxl']);
 }
 
 export async function findById (addonId) {

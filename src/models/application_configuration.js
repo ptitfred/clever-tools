@@ -1,5 +1,5 @@
 import cliparse from 'cliparse';
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
 import Logger from '../logger.js';
 

@@ -1,11 +1,11 @@
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
-import AppConfig from '../models/app_configuration.js';
-import Organisation from '../models/organisation.js';
+import * as AppConfig from '../models/app_configuration.js';
+import * as Organisation from '../models/organisation.js';
 import { sendToApi } from '../models/send-to-api.js';
-import Interact from '../models/interact.js';
+import * as Interact from '../models/interact.js';
 import Logger from '../logger.js';
-import application from '@clevercloud/client/cjs/api/v2/application.js';
+import * as Application from '@clevercloud/client/cjs/api/v2/application.js';
 
 export async function listNamespaces (params) {
   const namespaces = await Organisation.getNamespaces(params);

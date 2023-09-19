@@ -5,7 +5,7 @@ import _ from 'lodash';
 import slugify from 'slugify';
 
 import Logger from '../logger.js';
-import User from './user.js';
+import * as User from './user.js';
 import { conf } from './configuration.js';
 
 // TODO: Maybe use fs-utils findPath()

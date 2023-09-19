@@ -1,4 +1,4 @@
-import AppConfig from '../models/app_configuration.js';
+import * as AppConfig from '../models/app_configuration.js';
 import Logger from '../logger.js';
 
 export async function makeDefault (params) {

@@ -3,14 +3,14 @@ import util from 'util';
 
 const delay = util.promisify(setTimeout);
 
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 import open from 'open';
 import superagent from 'superagent';
 
 import Logger from '../logger.js';
-import User from '../models/user.js';
+import * as User from '../models/user.js';
 import { conf, writeOAuthConf } from '../models/configuration.js';
-import { version } from '../../package';
+import pkg from '../../package.json' assert  { type: "json" };
 
 // 20 random bytes as Base64URL
 function randomToken () {
@@ -47,7 +47,7 @@ async function loginViaConsole () {
   const cliToken = randomToken();
 
   const consoleUrl = new URL(conf.CONSOLE_TOKEN_URL);
-  consoleUrl.searchParams.set('cli_version', version);
+  consoleUrl.searchParams.set('cli_version', pkg.version);
   consoleUrl.searchParams.set('cli_token', cliToken);
 
   const cliPollUrl = new URL(conf.API_HOST);

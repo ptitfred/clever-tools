@@ -1,4 +1,4 @@
-const autocomplete = require('cliparse').autocomplete;
+import cliparse from 'cliparse';
 
 const DRAIN_TYPES = [
   { id: 'TCPSyslog' },
@@ -84,5 +84,5 @@ function keyEmpty ({ apiKey }) {
 }
 
 export function listDrainTypes () {
-  return autocomplete.words(DRAIN_TYPES.map((type) => type.id));
+  return cliparse.autocomplete.words(DRAIN_TYPES.map((type) => type.id));
 }

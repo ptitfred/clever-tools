@@ -1,5 +1,5 @@
-import AppConfig from '../models/app_configuration.js';
-import application from '@clevercloud/client/cjs/api/v2/application.js';
+import * as AppConfig from '../models/app_configuration.js';
+import * as Application from '@clevercloud/client/cjs/api/v2/application.js';
 import Logger from '../logger.js';
 import { sendToApi } from '../models/send-to-api.js';
 

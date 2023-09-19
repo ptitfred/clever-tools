@@ -1,11 +1,11 @@
 import os from 'os';
 
 import { releaseInfo as getLinuxInfos } from 'linux-release-info';
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 
 import Logger from '../logger.js';
-import pkg from '../../package.json';
-import User from '../models/user.js';
+import pkg from '../../package.json' assert { type: "json" };
+import * as User from '../models/user.js';
 import { conf, loadOAuthConf } from '../models/configuration.js';
 
 export async function diag () {

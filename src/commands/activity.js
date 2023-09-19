@@ -1,9 +1,9 @@
-import colors from 'colors/safe';
+import colors from 'colors/safe.js';
 import moment from 'moment';
 
-import Activity from '../models/activity.js';
-import AppConfig from '../models/app_configuration.js';
-import formatTable from '../format-table';
+import * as Activity from '../models/activity.js';
+import * as AppConfig from '../models/app_configuration.js';
+import formatTable from '../format-table.js';
 import Logger from '../logger.js';
 import { Deferred } from '../models/utils.js';
 import { EventsStream } from '@clevercloud/client/cjs/streams/events.node.js';
