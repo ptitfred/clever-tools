@@ -12,6 +12,13 @@ if (process.argv.includes('--autocomplete-index')) {
   process.env.CLEVER_QUIET = '1';
 }
 
+// These need to be set before other stuff
+// Disable color globally if the user asked to
+if (process.argv.includes('--nocolor')) {
+  const colors = require('colors');
+  colors.disable();
+}
+
 const cliparse = require('cliparse');
 const cliparseCommands = require('cliparse/src/command.js');
 const updateNotifier = require('update-notifier');
@@ -366,6 +373,7 @@ function run () {
       description: 'Drain custom key',
     }),
     verbose: cliparse.flag('verbose', { aliases: ['v'], description: 'Verbose output' }),
+    nocolor: cliparse.flag('nocolor', { description: 'Output without any colors' }),
     withoutCache: cliparse.flag('without-cache', { description: 'Restart the application without using cache' }),
     confirmAddonCreation: cliparse.flag('yes', {
       aliases: ['y'],
@@ -1079,7 +1087,7 @@ function run () {
     name: 'clever',
     description: 'CLI tool to manage Clever Cloud\'s data and products',
     version: pkg.version,
-    options: [opts.verbose, opts.noUpdateNotifier],
+    options: [opts.verbose, opts.noUpdateNotifier, opts.nocolor],
     helpCommand: false,
     commands,
   });
