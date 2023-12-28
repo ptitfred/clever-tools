@@ -13,8 +13,13 @@ if (process.argv.includes('--autocomplete-index')) {
 }
 
 // These need to be set before other stuff
-// Disable color globally if the user asked to with --no-color or --color false
-if (process.argv.includes('--no-color') || (process.argv.includes('--color') && process.argv[process.argv.indexOf('--color') + 1] === 'false')) {
+// Disable color globally if:
+// - It's a non-TTY environment and the user didn't ask for color
+// - The user asked with --no-color or --color false
+const noColorAsked = process. argv.includes('--no-color') || (process.argv.includes('--color') && process.argv[process.argv.indexOf('--color') + 1] === 'false');
+const noColorTTY = !process.stdout.isTTY && !(process.argv.includes('--color') && process.argv[process.argv.indexOf('--color') + 1] === 'true');
+
+if (noColorAsked || noColorTTY) {
   const colors = require('colors');
   colors.disable();
 }
