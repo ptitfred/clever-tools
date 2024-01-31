@@ -1,42 +1,87 @@
 'use strict';
 
-const { getAccessLogsFromWarp10InBatches, getContinuousAccessLogsFromWarp10 } = require('@clevercloud/client/cjs/access-logs.js');
-const { getWarp10AccessLogsToken } = require('@clevercloud/client/cjs/api/v2/warp-10.js');
-const { ONE_HOUR_MICROS, ONE_SECOND_MICROS, toMicroTimestamp } = require('@clevercloud/client/cjs/utils/date.js');
-
 const Addon = require('../models/addon.js');
 const AppConfig = require('../models/app_configuration.js');
 const Logger = require('../logger.js');
-const { getFormatter } = require('../models/accesslogs.js');
-const { sendToApi, sendToWarp10 } = require('../models/send-to-api.js');
+const { getHostAndTokens } = require('../models/send-to-api.js');
 
-const CONTINUOUS_DELAY = ONE_SECOND_MICROS * 5;
+// 2000 logs per 100ms maximum
+const THROTTLE_ELEMENTS = 2000;
+const THROTTLE_PER_IN_MILLISECONDS = 100;
 
 async function accessLogs (params) {
-  const { alias, format, before, after, addon: addonId, follow } = params.options;
-
+  const { ApplicationAccessLogStream } = await import('./access-logs.mjs');
+  const { apiHost, tokens } = await getHostAndTokens();
+  const { alias, format, before, after, addon: addonId } = params.options;
   const { ownerId, appId, realAddonId } = await getIds(addonId, alias);
-  const to = (before != null) ? toMicroTimestamp(before.toISOString()) : toMicroTimestamp();
-  const from = (after != null) ? toMicroTimestamp(after.toISOString()) : to - ONE_HOUR_MICROS;
-  const warpToken = await getWarp10AccessLogsToken({ orgaId: ownerId }).then(sendToApi);
 
-  if (follow && (before != null || after != null)) {
-    Logger.warn('Access logs are displayed continuously with -f/--follow therefore --before and --after are ignored.');
+  const stream = new ApplicationAccessLogStream({
+    apiHost,
+    tokens,
+    ownerId,
+    appId,
+    before,
+    after,
+    throttleElements: THROTTLE_ELEMENTS,
+    throttlePerInMilliseconds: THROTTLE_PER_IN_MILLISECONDS,
+  });
+
+  if (format === 'json' && (!before)) {
+    throw new Error('JSON format only works with a limiting parameter such as `before`.');
   }
 
-  const emitter = follow
-    ? getContinuousAccessLogsFromWarp10({ appId, realAddonId, warpToken, delay: CONTINUOUS_DELAY }, sendToWarp10)
-    : getAccessLogsFromWarp10InBatches({ appId, realAddonId, from, to, warpToken }, sendToWarp10);
+  // used for 'json' format
+  const acc = accumulator();
 
-  const formatLogLine = getFormatter(format, addonId != null);
+  stream
+    .onLog((log) => {
+      switch (format) {
+        case 'json':
+          acc.push(JSON.stringify(log));
+          break;
+        case 'json-stream':
+          Logger.println(JSON.stringify(log));
+          break;
+        case 'human':
+        default:
+          Logger.println(formatHuman(log));
+          break;
+      }
+    })
+    .on('open', (event) => {
+      Logger.debug(`stream opened! ${JSON.stringify({ appId })}`);
+    })
+    .on('error', (event) => {
+      Logger.error(event, event.error);
+    });
 
-  emitter.on('data', (data) => {
-    data.forEach((l) => Logger.println(formatLogLine(l)));
-  });
+  // Properly close the stream
+  process.once('SIGINT', (signal) => stream.close(signal));
 
-  return new Promise((resolve, reject) => {
-    emitter.on('error', reject);
-  });
+  const closeReason = await stream.start();
+
+  format === 'json' && acc.print();
+
+  Logger.debug(`stream closed: ${closeReason}`);
+}
+
+function formatHuman(log) {
+  const { date, http, requestId, source, bytesIn, bytesOut } = log;
+  const hasSourceCity = source.city != null && source.city !== '';
+
+  return `${date.toISOString(date)}\t${source.ip}\t${http.request.method}\t${http.request.path}\trequestId=${requestId}\tbytesIn=${bytesIn}\tbytesOut=${bytesOut}\tlocation=${source.countryCode}${hasSourceCity ? '/' + source.city : ''}`
+}
+
+function accumulator () {
+  return {
+    items: [],
+    push: (log) => this.items.push(log),
+    print: () => {
+      console.log('[\n');
+      this.items.join(', \n');
+      console.log('\n]');
+    },
+  };
 }
 
 async function getIds (addonId, alias) {
