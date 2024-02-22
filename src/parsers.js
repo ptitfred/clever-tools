@@ -190,6 +190,19 @@ function durationInSeconds (durationStr = '') {
     return cliparse.parsers.success(n);
   }
 }
+/**
+ * Parse a boolean input which is expect a default value as true
+ * An empty value returns true
+ * @returns {bool} true or false
+ */
+function booleanWithDefaultTrue (boolValue = '') {
+  const strBool = boolValue.toString();
+  return strBool === 'true' || strBool === ''
+    ? cliparse.parsers.success(true)
+    : strBool === 'false'
+      ? cliparse.parsers.success(false)
+      : cliparse.parsers.error('Invalid value, must be empty or a boolean as true or false');
+}
 
 module.exports = {
   buildFlavor,
@@ -212,4 +225,5 @@ module.exports = {
   portNumber,
   durationInSeconds,
   nonEmptyString,
+  booleanWithDefaultTrue,
 };
