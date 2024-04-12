@@ -235,7 +235,9 @@ async function showProvider (params) {
 
 async function env (params) {
 
-  const { org, format } = params.options;
+  const { org } = params.options;
+  const format = params.options['add-export'] ? 'shell' : params.options.format;
+
   const [addonIdOrRealId] = params.args;
 
   const addonId = await resolveAddonId(addonIdOrRealId);
