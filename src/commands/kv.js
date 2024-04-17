@@ -2,13 +2,14 @@
 const { createClient } = require('redis');
 const jsonata = require('jsonata');
 const { forEach } = require('lodash');
+const { error } = require('cliparse/src/parsers');
 
 const MAX_RETRIES = 10;
 
 async function connect () {
   const kvToken = process.env.KV_TOKEN;
   if (!kvToken) {
-    throw new Error("No 'KV_TOKEN' found in environment variables");
+    throw error("No 'KV_TOKEN' found in environment variables");
   }
 
   const kvHost = 'kv.materiadb.eu-fr-1.services.clever-cloud.com';
@@ -19,7 +20,7 @@ async function connect () {
   const client = await createClient({ url: kvURI })
     .on('error', (err) => {
       if (count > MAX_RETRIES) {
-        throw new Error(`Server connexion error: ${MAX_RETRIES} attempts failed. Exiting.`);
+        throw error(`Server connexion error: ${MAX_RETRIES} attempts failed. Exiting.`);
       }
       console.log('Server connexion error: ', err);
       count++;
@@ -30,9 +31,10 @@ async function connect () {
 }
 
 async function isValidJSONAndHasName (jsonString, propertyToCheck) {
+
   const jsonObject = JSON.parse(jsonString);
   if (!jsonObject || typeof jsonObject !== 'object') {
-    throw new Error('JSON object is not valid');
+    throw error('JSON object is not valid');
   }
   if (propertyToCheck === '') {
     return jsonObject;
@@ -49,17 +51,50 @@ async function isValidJSONAndHasName (jsonString, propertyToCheck) {
 
   const doesPropertyExist = await jsonata(`$exists(${propertyToCheck})`).evaluate(jsonObject);
   if (!doesPropertyExist) {
-    throw new Error(`JSON object does not have property '${propertyToCheck}'`);
+    throw error(`JSON object does not have property '${propertyToCheck}'`);
   }
 
   const result = jsonata(propertyToCheck).evaluate(jsonObject);
   return result;
+
+}
+
+async function exists (params) {
+  const client = await connect();
+  const [key] = params.args;
+  const value = await client.EXISTS(key);
+  console.log(value);
+  await client.disconnect();
 }
 
 async function get (params) {
   const client = await connect();
   const [key] = params.args;
   const value = await client.GET(key);
+  console.log(value);
+  await client.disconnect();
+}
+
+async function keys (params) {
+  const client = await connect();
+  const [pattern] = params.args;
+  const value = await client.KEYS(pattern);
+  console.log(value);
+  await client.disconnect();
+}
+
+async function type (params) {
+  const client = await connect();
+  const [key] = params.args;
+  const value = await client.TYPE(key);
+  console.log(value);
+  await client.disconnect();
+}
+
+async function strlen (params) {
+  const client = await connect();
+  const [key] = params.args;
+  const value = await client.STRLEN(key);
   console.log(value);
   await client.disconnect();
 }
@@ -77,6 +112,14 @@ async function set (params) {
   const client = await connect();
   const [key, value] = params.args;
   await client.SET(key, value);
+  console.log({ [key]: value });
+  await client.disconnect();
+}
+
+async function append (params) {
+  const client = await connect();
+  const [key, value] = params.args;
+  await client.APPEND(key, value);
   console.log({ [key]: value });
   await client.disconnect();
 }
@@ -126,6 +169,13 @@ async function scan () {
   await client.disconnect();
 }
 
+async function dbsize () {
+  const client = await connect();
+  const value = await client.DBSIZE();
+  console.log(value);
+  await client.disconnect();
+}
+
 async function commands_list () {
   const client = await connect();
   const commands = await client.COMMAND_LIST();
@@ -136,7 +186,7 @@ async function commands_list () {
   await client.disconnect();
 }
 
-async function raw (params) {
+async function redis_raw (params) {
   const client = await connect();
   const [commands] = params.args;
   const commandsArray = commands.split(' ');
@@ -145,4 +195,22 @@ async function raw (params) {
   await client.disconnect();
 }
 
-module.exports = { get, getjson, set, incr, decr, del, flushdb, commands_list, ping, raw, scan };
+module.exports = {
+  append,
+  commands_list,
+  dbsize,
+  decr,
+  del,
+  exists,
+  flushdb,
+  get,
+  getjson,
+  incr,
+  keys,
+  ping,
+  redis_raw,
+  scan,
+  set,
+  strlen,
+  type,
+};
