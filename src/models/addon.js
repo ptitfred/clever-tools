@@ -146,11 +146,7 @@ async function create ({ ownerId, name, providerName, planName, region, skipConf
     throw new Error(`invalid region name. Available regions: ${provider.regions.join(', ')}`);
   }
 
-  const plan = provider.plans.find((p) => p.slug.toLowerCase() === planName.toLowerCase());
-  if (plan == null) {
-    const availablePlans = provider.plans.map((p) => p.slug);
-    throw new Error(`invalid plan name. Available plans: ${availablePlans.join(', ')}`);
-  }
+  const plan = await getPlan(planName, provider);
 
   const providerInfos = await getProviderInfos(provider.id);
   const planType = plan.features.find(({ name }) => name.toLowerCase() === 'type');
@@ -287,6 +283,24 @@ function parseAddonOptions (options) {
     options[key] = formattedValue;
     return options;
   }, {});
+}
+
+async function getPlan (planName, provider) {
+  // if no plan specified, pick the cheapest one
+  if (planName == null || planName === '') {
+    if (provider.plans.length === 0) {
+      throw new Error('no plans available');
+    }
+
+    return provider.plans.sort((p1, p2) => p1.price - p2.price)[0];
+  }
+
+  const plan = provider.plans.find((p) => p.slug.toLowerCase() === planName.toLowerCase());
+  if (plan == null) {
+    const availablePlans = provider.plans.map((p) => p.slug);
+    throw new Error(`invalid plan name. Available plans: ${availablePlans.join(', ')}`);
+  }
+  return plan;
 }
 
 module.exports = {
