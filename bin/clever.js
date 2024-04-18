@@ -638,7 +638,7 @@ function run () {
   const cancelDeploy = lazyRequirePromiseModule('../src/commands/cancel-deploy.js');
   const cancelDeployCommand = cliparse.command('cancel-deploy', {
     description: 'Cancel an ongoing deployment',
-    options: [opts.alias],
+    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName],
   }, cancelDeploy('cancelDeploy'));
 
   // CONFIG COMMAND
