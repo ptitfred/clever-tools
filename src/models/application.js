@@ -12,6 +12,8 @@ const Organisation = require('./organisation.js');
 const User = require('./user.js');
 
 const { sendToApi } = require('../models/send-to-api.js');
+const AppConfig = require('./app_configuration.js');
+const { resolveOwnerId } = require('./ids-resolver.js');
 
 function listAvailableTypes () {
   return autocomplete.words(['docker', 'elixir', 'go', 'gradle', 'haskell', 'jar', 'maven', 'meteor', 'node', 'php', 'play1', 'play2', 'python', 'ruby', 'rust', 'sbt', 'static-apache', 'war']);
@@ -129,6 +131,94 @@ function getFromSelf (appId) {
   return application.get({ appId }).then(sendToApi);
 };
 
+/**
+ * @param {{app_id: string}|{app_name: string}} appIdOrName
+ * @param {{orga_id: string}|{orga_name: string}} orgaIdOrName
+ * @param {string} alias
+ * @return {Promise<{appId: string, ownerId: string}>}
+ */
+async function resolveId (appIdOrName, orgaIdOrName, alias) {
+  // -- resolve by linked app
+
+  if (appIdOrName == null) {
+    const appDetails = await AppConfig.getAppDetails({ alias });
+    return { appId: appDetails.appId, ownerId: appDetails.ownerId };
+  }
+
+  // -- resolve by app id
+
+  if (appIdOrName.app_id != null) {
+    if (orgaIdOrName == null) {
+      const ownerId = await resolveOwnerId(appIdOrName.app_id);
+      if (ownerId != null) {
+        return {
+          appId: appIdOrName.app_id,
+          ownerId,
+        };
+      }
+
+      throw new Error('Application not found');
+    }
+
+    if (orgaIdOrName.orga_id != null) {
+      return {
+        appId: appIdOrName.app_id,
+        ownerId: orgaIdOrName.orga_id,
+      };
+    }
+
+    if (orgaIdOrName.orga_name != null) {
+      return {
+        appId: appIdOrName.app_id,
+        ownerId: await Organisation.getId(orgaIdOrName),
+      };
+    }
+
+    throw new Error('Application not found');
+  }
+
+  // -- resolve by app name
+
+  if (orgaIdOrName == null) {
+    const currentUserId = await User.getCurrentId();
+
+    let app = null;
+
+    async function check (ownerId) {
+      const apps = (await application.getAll({ id: ownerId }).then(sendToApi))
+        .filter((app) => app.name === appIdOrName.app_name);
+      if (apps.length > 1) {
+        throw new Error('Ambiguous application name');
+      }
+      if (apps.length === 1) {
+        if (app != null) {
+          throw new Error('Ambiguous application name');
+        }
+        app = { appId: apps[0].id, ownerId };
+      }
+    }
+
+    await check(currentUserId);
+    const organisations = await Organisation.getAll();
+    for (const organisation of organisations) {
+      await check(organisation.id);
+    }
+
+    if (app != null) {
+      return app;
+    }
+
+    throw new Error('Application not found');
+  }
+
+  const orgId = await Organisation.getId(orgaIdOrName);
+  const app = await getByName(orgId, appIdOrName.app_name);
+  return {
+    appId: app.id,
+    ownerId: app.ownerId,
+  };
+}
+
 async function linkRepo (app, orgaIdOrName, alias, ignoreParentConfig) {
   Logger.debug(`Linking current repository to the app: ${app.app_id || app.app_name}`);
 
@@ -237,6 +327,7 @@ async function unlink (ownerId, appId, dependency) {
 };
 
 module.exports = {
+  resolveId,
   create,
   deleteApp,
   get,

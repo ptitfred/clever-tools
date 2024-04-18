@@ -23,9 +23,7 @@ async function getId (orgaIdOrName) {
 }
 
 async function getByName (name) {
-
-  const fullSummary = await getSummary({}).then(sendToApi);
-  const filteredOrgs = _.filter(fullSummary.organisations, { name });
+  const filteredOrgs = _.filter(await getAll(), { name });
 
   if (filteredOrgs.length === 0) {
     throw new Error('Organisation not found');
@@ -51,7 +49,13 @@ function completeNamespaces () {
   return getNamespaces(params).then(autocomplete.words);
 };
 
+async function getAll () {
+  const fullSummary = await getSummary({}).then(sendToApi);
+  return fullSummary.organisations;
+}
+
 module.exports = {
+  getAll,
   getId,
   getNamespaces,
   completeNamespaces,
