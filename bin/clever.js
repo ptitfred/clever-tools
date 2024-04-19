@@ -940,7 +940,7 @@ function run () {
   }, publishedConfig('importEnv'));
   const publishedConfigCommands = cliparse.command('published-config', {
     description: 'Manage the configuration made available to other applications by this application',
-    options: [opts.alias],
+    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName],
     commands: [publishedConfigSetCommand, publishedConfigRemoveCommand, publishedConfigImportCommand],
   }, publishedConfig('list'));
 
