@@ -908,7 +908,7 @@ function run () {
   const open = lazyRequirePromiseModule('../src/commands/open.js');
   const openCommand = cliparse.command('open', {
     description: 'Open an application in your browser',
-    options: [opts.alias],
+    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName],
   }, open('open'));
 
   // CONSOLE COMMAND
