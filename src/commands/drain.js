@@ -1,6 +1,6 @@
 'use strict';
 
-const AppConfig = require('../models/app_configuration.js');
+const Application = require('../models/application.js');
 const { createDrainBody } = require('../models/drain.js');
 const Logger = require('../logger.js');
 
@@ -8,16 +8,16 @@ const { getDrains, createDrain, deleteDrain, updateDrainState } = require('@clev
 const { sendToApi } = require('../models/send-to-api.js');
 
 // TODO: This could be useful in other commands
-async function getAppOrAddonId ({ alias, addonId }) {
+async function getAppOrAddonId ({ alias, appIdOrName, orgIdOrName, addonId }) {
   return (addonId != null)
     ? addonId
-    : AppConfig.getAppDetails({ alias }).then(({ appId }) => appId);
+    : await Application.resolveId(appIdOrName, orgIdOrName, alias).then(({ appId }) => appId);
 }
 
 async function list (params) {
-  const { alias, addon: addonId } = params.options;
+  const { alias, app: appIdOrName, org: orgIdOrName, addon: addonId } = params.options;
 
-  const appIdOrAddonId = await getAppOrAddonId({ alias, addonId });
+  const appIdOrAddonId = await getAppOrAddonId({ alias, appIdOrName, orgIdOrName, addonId });
   const drains = await getDrains({ appId: appIdOrAddonId }).then(sendToApi);
 
   if (drains.length === 0) {
