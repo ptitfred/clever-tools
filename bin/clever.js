@@ -948,7 +948,7 @@ function run () {
   const restart = lazyRequirePromiseModule('../src/commands/restart.js');
   const restartCommand = cliparse.command('restart', {
     description: 'Start or restart an application',
-    options: [opts.alias, opts.commit, opts.withoutCache, opts.quiet, opts.followDeployLogs],
+    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName, opts.commit, opts.withoutCache, opts.quiet, opts.followDeployLogs],
   }, restart('restart'));
 
   // SCALE COMMAND
