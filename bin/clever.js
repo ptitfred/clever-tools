@@ -679,7 +679,7 @@ function run () {
   const deleteCommandModule = lazyRequirePromiseModule('../src/commands/delete.js');
   const deleteCommand = cliparse.command('delete', {
     description: 'Delete an application',
-    options: [opts.alias, opts.confirmApplicationDeletion],
+    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName, opts.confirmApplicationDeletion],
   }, deleteCommandModule('deleteApp'));
 
   // DEPLOY COMMAND
