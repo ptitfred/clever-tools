@@ -2,12 +2,12 @@
 
 const colors = require('colors/safe');
 
-const AppConfig = require('../models/app_configuration.js');
 const Organisation = require('../models/organisation.js');
 const { sendToApi } = require('../models/send-to-api.js');
 const Interact = require('../models/interact.js');
 const Logger = require('../logger.js');
 const application = require('@clevercloud/client/cjs/api/v2/application.js');
+const Application = require('../models/application.js');
 
 async function listNamespaces (params) {
   const namespaces = await Organisation.getNamespaces(params);
@@ -16,8 +16,8 @@ async function listNamespaces (params) {
 };
 
 async function list (params) {
-  const { alias } = params.options;
-  const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
+  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
 
   const redirs = await application.getTcpRedirs({ id: ownerId, appId }).then(sendToApi);
 
@@ -46,8 +46,8 @@ async function acceptPayment (result, skipConfirmation) {
 }
 
 async function add (params) {
-  const { alias, namespace, yes: skipConfirmation } = params.options;
-  const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
+  const { alias, app: appIdOrName, org: orgIdOrName, namespace, yes: skipConfirmation } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
 
   const { port } = await application.addTcpRedir({ id: ownerId, appId }, { namespace }).then(sendToApi).catch((error) => {
     if (error.status === 402) {
@@ -65,8 +65,8 @@ async function add (params) {
 
 async function remove (params) {
   const [port] = params.args;
-  const { alias, namespace } = params.options;
-  const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
+  const { alias, app: appIdOrName, org: orgIdOrName, namespace } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
 
   await application.removeTcpRedir({ id: ownerId, appId, sourcePort: port, namespace }).then(sendToApi);
 

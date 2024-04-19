@@ -326,22 +326,20 @@ async function unlink (ownerId, appId, dependency) {
   return application.removeDependency({ id: ownerId, appId, dependencyId }).then(sendToApi);
 };
 
-module.exports = {
-  resolveId,
-  create,
-  deleteApp,
-  get,
-  link,
-  linkRepo,
-  listAvailableAliases,
-  listAvailableFlavors,
-  listAvailableTypes,
-  AVAILABLE_ZONES,
-  listAvailableZones,
-  listDependencies,
-  __mergeScalabilityParameters: mergeScalabilityParameters,
-  redeploy,
-  setScalability,
-  unlink,
-  unlinkRepo,
-};
+module.exports.resolveId = resolveId;
+module.exports.create = create;
+module.exports.deleteApp = deleteApp;
+module.exports.get = get;
+module.exports.link = link;
+module.exports.linkRepo = linkRepo;
+module.exports.listAvailableAliases = listAvailableAliases;
+module.exports.listAvailableFlavors = listAvailableFlavors;
+module.exports.listAvailableTypes = listAvailableTypes;
+module.exports.AVAILABLE_ZONES = AVAILABLE_ZONES;
+module.exports.listAvailableZones = listAvailableZones;
+module.exports.listDependencies = listDependencies;
+module.exports.__mergeScalabilityParameters = mergeScalabilityParameters;
+module.exports.redeploy = redeploy;
+module.exports.setScalability = setScalability;
+module.exports.unlink = unlink;
+module.exports.unlinkRepo = unlinkRepo;
