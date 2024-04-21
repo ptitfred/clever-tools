@@ -1120,7 +1120,7 @@ function run () {
     description: 'Get the number of keys in the MateriaDB KV',
   }, kv('dbsize'));
   const kvCommand = cliparse.command('kv', {
-    description: 'Manage MateriaDB KV without a third-party client',
+    description: '/!\ This is PoC software! Manage MateriaDB KV without a third-party client',
     args: [args.kvCommand],
     commands: [
       kvPingCommand,
