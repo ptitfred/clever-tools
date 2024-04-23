@@ -100,42 +100,25 @@ async function rm (params) {
 
 async function diagApplication (params) {
 
-  // const records = await resolver.resolve('hsablonniere.com', 'A').catch((err) => {
-  //   console.error(err);
-  //   return [];
-  // });
-  //
-  // console.log(records)
-  //
-
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
 
   const app = await getApp({ id: ownerId, appId }).then(sendToApi);
   const expectedDnsForPublicLoadBalancer = await getDefaultLoadBalancersDnsInfo({ id: ownerId, appId }).then(sendToApi);
 
-  const domainMapping = app.vhosts.map((vh) => {
-    const url = new URL('https://' + vh.fqdn);
-    return { hostname: url.hostname, pathPrefix: url.pathname };
-  });
+  const routingConfigRaw = getRoutingConfig(app.vhosts);
+  const routingConfig = sortRoutingConfig(routingConfigRaw);
 
-  const { cname: expectedCname, a: expectedA } = expectedDnsForPublicLoadBalancer[0].dns;
+  const expectedA = expectedDnsForPublicLoadBalancer[0].dns.a;
+  const expectedCname = expectedDnsForPublicLoadBalancer[0].dns.cname.replace(/\.$/, '');
 
-  for (const { hostname, pathPrefix } of domainMapping) {
+  for (const { hostname, pathPrefix } of routingConfig) {
 
     console.log(colors.blue(hostname) + ' ' + colors.yellow(pathPrefix));
 
-    const realARecords = await resolver.resolve(hostname, 'A').catch((err) => {
-      // console.error(err);
-      return [];
-    });
-    realARecords.length = 0;
-    const realCnameRecords = await resolver.resolve(hostname, 'CNAME')
-      .then((records) => records.map((cname) => cname + '.'))
-      .catch((err) => {
-        // console.error(err);
-        return [];
-      });
+    const realARecords = await resolveA(hostname);
+
+    // console.log({ realARecords });
 
     // if cleverapps
     if (hostname.endsWith('cleverapps.io')) {
@@ -149,7 +132,7 @@ async function diagApplication (params) {
           console.log('  A     ' + aRecord.padEnd(15, ' ') + colors.green(' OK'));
         }
         else {
-          console.log('  A     ' + aRecord.padEnd(15, ' ') + colors.red(' please remove this record'));
+          console.log('  A     ' + aRecord.padEnd(15, ' ') + colors.red(' this IP does not point to CC, maybe you are using a CDN'));
         }
       }
       for (const aRecord of expectedA) {
@@ -162,21 +145,25 @@ async function diagApplication (params) {
     // if not apex
     else {
 
+      const realCnameRecords = await resolveCname(hostname);
+
+      let hasCorrectCname = false;
       for (const cnameRecord of realCnameRecords) {
-        if (cnameRecord === expectedCname) {
+        if (cnameRecord === expectedCname || hostname.endsWith(cnameRecord)) {
           console.log('  CNAME ' + cnameRecord + colors.green(' OK'));
+          hasCorrectCname = true;
         }
         else {
           console.log('  CNAME ' + cnameRecord + colors.red(' please remove this record'));
         }
       }
-      if (!realCnameRecords.includes(expectedCname)) {
+      if (!hasCorrectCname && !realCnameRecords.includes(expectedCname)) {
         console.log('  CNAME ' + expectedCname + colors.yellow(' please add this record'));
       }
 
       // TODO test A records
 
-      console.log(realARecords.length + ' A records');
+      // console.log(realARecords.length + ' A records');
     }
   }
 
@@ -195,7 +182,7 @@ async function diagAll (params) {
     console.log(ownerId, appId);
     const domainMapping = app.vhosts.map((vh) => {
       const url = new URL('https://' + vh.fqdn);
-      console.log('  ',url.hostname, url.pathname)
+      console.log('  ', url.hostname, url.pathname);
       // return { hostname: url.hostname, pathPrefix: url.pathname };
     });
   }
@@ -213,6 +200,56 @@ function getDefaultLoadBalancersDnsInfo (params) {
     // no query params
     // no body
   });
+}
+
+function getRoutingConfig (vhosts) {
+  return vhosts.map((vh) => {
+    const url = new URL('https://' + vh.fqdn);
+    return { hostname: url.hostname, pathPrefix: url.pathname };
+  });
+}
+
+function sortRoutingConfig (routingConfig) {
+  return routingConfig
+    .slice()
+    .sort((a, b) => {
+      const reverseA = a.hostname.split('.').reverse().join('.');
+      const reverseB = b.hostname.split('.').reverse().join('.');
+      return reverseA.localeCompare(reverseB);
+    });
+}
+
+async function resolveA (hostname) {
+  return resolver.resolve(hostname, 'A')
+    .catch((err) => {
+      console.error(err);
+      return [];
+    });
+}
+
+async function resolveA (hostname) {
+  const url = new URL(`https://cloudflare-dns.com/dns-query`);
+  url.searchParams.set('name', hostname);
+  url.searchParams.set('type', 'A');
+  return fetch(url, {
+    headers: {
+      'accept': 'application/dns-json',
+    },
+  })
+    .then((r) => r.json())
+    .then((records) => {
+      return records.Answer
+        .filter(({ name }) => name === hostname)
+        .map(({ data }) => data);
+    });
+}
+
+async function resolveCname (hostname) {
+  return resolver.resolve(hostname, 'CNAME')
+    .catch((err) => {
+      console.error(err);
+      return [];
+    });
 }
 
 module.exports = { list, add, getFavourite, setFavourite, unsetFavourite, rm, diagApplication, diagAll };
