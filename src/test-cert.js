@@ -15,13 +15,12 @@ function testCert (hostname) {
     method: 'GET',
     checkServerIdentity: function (host, cert) {
 
-      console.log(cert)
-
+      console.log('');
       console.log(host);
       console.log('  subject CN     :', cert.subject.CN);
       console.log('  issuer  C      :', cert.issuer.C);
-      console.log('  issuer  ST      :', cert.issuer.ST);
-      console.log('  issuer  ST      :', cert.issuer.ST);
+      console.log('  issuer  ST     :', cert.issuer.ST);
+      console.log('  issuer  ST     :', cert.issuer.ST);
       console.log('  issuer  L      :', cert.issuer.L);
       console.log('  issuer  O      :', cert.issuer.O);
       console.log('  issuer  CN     :', cert.issuer.CN);
