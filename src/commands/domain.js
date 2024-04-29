@@ -11,6 +11,7 @@ const {
   removeDomain,
 } = require('@clevercloud/client/cjs/api/v2/application.js');
 const { sendToApi } = require('../models/send-to-api.js');
+const { testCert } = require('../test-cert.js');
 
 function getFavouriteDomain ({ ownerId, appId }) {
   return getFavouriteDomainWithError({ id: ownerId, appId })
@@ -26,6 +27,16 @@ function getFavouriteDomain ({ ownerId, appId }) {
 }
 
 async function list (params) {
+  const { alias } = params.options;
+  const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
+
+  const app = await getApp({ id: ownerId, appId }).then(sendToApi);
+  return app.vhosts.forEach(({ fqdn }) => {
+    testCert(fqdn);
+  });
+}
+
+async function listOld (params) {
   const { alias } = params.options;
   const { ownerId, appId } = await AppConfig.getAppDetails({ alias });
 
