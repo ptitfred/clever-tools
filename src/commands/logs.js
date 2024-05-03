@@ -9,7 +9,7 @@ const colors = require('colors/safe');
 const { resolveAddonId } = require('../models/ids-resolver.js');
 
 async function appLogs (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName, addon: addonIdOrRealId, after: since, before: until, search, 'deployment-id': deploymentId, format } = params.options;
+  const { app: appIdOrName, org: orgIdOrName, addon: addonIdOrRealId, after: since, before: until, search, 'deployment-id': deploymentId, format } = params.options;
 
   // ignore --search ""
   const filter = (search !== '') ? search : null;
@@ -27,7 +27,7 @@ async function appLogs (params) {
     return LogV2.displayLogs({ appAddonId: addonId, since, until, filter, deploymentId });
   }
 
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   if (isForHuman) {
     Logger.println(colors.blue('Waiting for application logs…'));

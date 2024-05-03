@@ -7,8 +7,8 @@ const Domain = require('../models/domain.js');
 const Logger = require('../logger.js');
 
 async function open (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const vhost = await Domain.getBest(appId, ownerId);
   const url = 'https://' + vhost.fqdn;

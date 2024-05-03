@@ -577,14 +577,14 @@ function run () {
   const accesslogsModule = lazyRequirePromiseModule('../src/commands/accesslogs.js');
   const accesslogsCommand = cliparse.command('accesslogs', {
     description: 'Fetch access logs',
-    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName, opts.accesslogsFormat, opts.before, opts.after, opts.accesslogsFollow, opts.addonId],
+    options: [opts.appIdOrName, opts.orgaIdOrName, opts.accesslogsFormat, opts.before, opts.after, opts.accesslogsFollow, opts.addonId],
   }, accesslogsModule('accessLogs'));
 
   // ACTIVITY COMMAND
   const activity = lazyRequirePromiseModule('../src/commands/activity.js');
   const activityCommand = cliparse.command('activity', {
     description: 'Show last deployments of an application',
-    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName, opts.follow, opts.showAllActivity],
+    options: [opts.appIdOrName, opts.orgaIdOrName, opts.follow, opts.showAllActivity],
   }, activity('activity'));
 
   // ADDON COMMANDS
@@ -638,7 +638,7 @@ function run () {
   const cancelDeploy = lazyRequirePromiseModule('../src/commands/cancel-deploy.js');
   const cancelDeployCommand = cliparse.command('cancel-deploy', {
     description: 'Cancel an ongoing deployment',
-    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName],
+    options: [opts.appIdOrName, opts.orgaIdOrName],
   }, cancelDeploy('cancelDeploy'));
 
   // CONFIG COMMAND
@@ -657,7 +657,7 @@ function run () {
   }, config('update'));
   const configCommands = cliparse.command('config', {
     description: 'Display or edit the configuration of your application',
-    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName],
+    options: [opts.appIdOrName, opts.orgaIdOrName],
     commands: [configGetCommand, configSetCommand, configUpdateCommand],
   }, config('get'));
 
@@ -679,14 +679,14 @@ function run () {
   const deleteCommandModule = lazyRequirePromiseModule('../src/commands/delete.js');
   const deleteCommand = cliparse.command('delete', {
     description: 'Delete an application',
-    options: [opts.alias, opts.appIdOrName, opts.orgaIdOrName, opts.confirmApplicationDeletion],
+    options: [opts.appIdOrName, opts.orgaIdOrName, opts.confirmApplicationDeletion],
   }, deleteCommandModule('deleteApp'));
 
   // DEPLOY COMMAND
   const deploy = lazyRequirePromiseModule('../src/commands/deploy.js');
   const deployCommand = cliparse.command('deploy', {
     description: 'Deploy an application',
-    options: [opts.alias, opts.branch, opts.gitTag, opts.quiet, opts.forceDeploy, opts.followDeployLogs, opts.sameCommitPolicy],
+    options: [opts.branch, opts.gitTag, opts.quiet, opts.forceDeploy, opts.followDeployLogs, opts.sameCommitPolicy],
   }, deploy('deploy'));
 
   // DIAG COMMAND

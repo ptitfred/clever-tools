@@ -16,8 +16,8 @@ async function listNamespaces (params) {
 };
 
 async function list (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const redirs = await application.getTcpRedirs({ id: ownerId, appId }).then(sendToApi);
 
@@ -46,8 +46,8 @@ async function acceptPayment (result, skipConfirmation) {
 }
 
 async function add (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName, namespace, yes: skipConfirmation } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName, namespace, yes: skipConfirmation } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const { port } = await application.addTcpRedir({ id: ownerId, appId }, { namespace }).then(sendToApi).catch((error) => {
     if (error.status === 402) {
@@ -65,8 +65,8 @@ async function add (params) {
 
 async function remove (params) {
   const [port] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName, namespace } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName, namespace } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   await application.removeTcpRedir({ id: ownerId, appId, sourcePort: port, namespace }).then(sendToApi);
 

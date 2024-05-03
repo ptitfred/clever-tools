@@ -6,8 +6,8 @@ const { getAllDeployments, cancelDeployment } = require('@clevercloud/client/cjs
 const { sendToApi } = require('../models/send-to-api.js');
 
 async function cancelDeploy (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const deployments = await getAllDeployments({ id: ownerId, appId, limit: 1 }).then(sendToApi);
 

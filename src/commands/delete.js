@@ -6,7 +6,7 @@ const Logger = require('../logger.js');
 
 async function deleteApp (params) {
   const { alias, app: appIdOrName, org: orgIdOrName, yes: skipConfirmation } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const app = await Application.get(ownerId, appId);
   if (app == null) {

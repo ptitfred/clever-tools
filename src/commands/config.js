@@ -9,8 +9,8 @@ const { sendToApi } = require('../models/send-to-api.js');
 
 async function get (params) {
   const [configurationName] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
   const app = await Application.get(ownerId, appId);
 
   if (configurationName == null) {
@@ -23,8 +23,8 @@ async function get (params) {
 
 async function set (params) {
   const [configurationName, configurationValue] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
   const config = ApplicationConfiguration.getById(configurationName);
 
   if (config != null) {
@@ -35,8 +35,8 @@ async function set (params) {
 }
 
 async function update (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
   const options = ApplicationConfiguration.parseOptions(params.options);
 
   if (Object.keys(options).length === 0) {

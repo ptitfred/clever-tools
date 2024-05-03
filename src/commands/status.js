@@ -66,8 +66,8 @@ function displayScalability (app) {
 }
 
 async function status (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const instances = await getAllInstances({ id: ownerId, appId }).then(sendToApi);
   const app = await getApplication({ id: ownerId, appId }).then(sendToApi);

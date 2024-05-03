@@ -26,8 +26,8 @@ function getFavouriteDomain ({ ownerId, appId }) {
 }
 
 async function list (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const app = await getApp({ id: ownerId, appId }).then(sendToApi);
   const favouriteDomain = await getFavouriteDomain({ ownerId, appId });
@@ -41,8 +41,8 @@ async function list (params) {
 
 async function add (params) {
   const [fqdn] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
   const encodedFqdn = encodeURIComponent(fqdn);
 
   await addDomain({ id: ownerId, appId, domain: encodedFqdn }).then(sendToApi);
@@ -50,8 +50,8 @@ async function add (params) {
 }
 
 async function getFavourite (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const favouriteDomain = await getFavouriteDomain({ ownerId, appId });
 
@@ -64,16 +64,16 @@ async function getFavourite (params) {
 
 async function setFavourite (params) {
   const [fqdn] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   await markFavouriteDomain({ id: ownerId, appId }, { fqdn }).then(sendToApi);
   Logger.println('Your favourite domain has been successfully set');
 }
 
 async function unsetFavourite (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   await unmarkFavouriteDomain({ id: ownerId, appId }).then(sendToApi);
   Logger.println('Favourite domain has been successfully unset');
@@ -81,8 +81,8 @@ async function unsetFavourite (params) {
 
 async function rm (params) {
   const [fqdn] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
   const encodedFqdn = encodeURIComponent(fqdn);
 
   await removeDomain({ id: ownerId, appId, domain: encodedFqdn }).then(sendToApi);

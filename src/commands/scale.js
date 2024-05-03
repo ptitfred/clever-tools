@@ -44,9 +44,9 @@ function validateOptions (options) {
 }
 
 async function scale (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
   const { minFlavor, maxFlavor, minInstances, maxInstances, buildFlavor } = validateOptions(params.options);
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   await Application.setScalability(appId, ownerId, {
     minFlavor,

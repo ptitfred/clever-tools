@@ -14,6 +14,7 @@ const User = require('./user.js');
 const { sendToApi } = require('../models/send-to-api.js');
 const AppConfig = require('./app_configuration.js');
 const { resolveOwnerId } = require('./ids-resolver.js');
+const { loadApplicationConf } = require('./app_configuration.js');
 
 function listAvailableTypes () {
   return autocomplete.words(['docker', 'elixir', 'go', 'gradle', 'haskell', 'jar', 'maven', 'meteor', 'node', 'php', 'play1', 'play2', 'python', 'ruby', 'rust', 'sbt', 'static-apache', 'war']);
@@ -134,14 +135,14 @@ function getFromSelf (appId) {
 /**
  * @param {{app_id: string}|{app_name: string}} appIdOrName
  * @param {{orga_id: string}|{orga_name: string}} orgaIdOrName
- * @param {string} alias
  * @return {Promise<{appId: string, ownerId: string}>}
  */
-async function resolveId (appIdOrName, orgaIdOrName, alias) {
+async function resolveId (appIdOrName, orgaIdOrName) {
   // -- resolve by linked app
 
+  // if no app is provided, the only choice we have is trying to use the default linked app.
   if (appIdOrName == null) {
-    const appDetails = await AppConfig.getAppDetails({ alias });
+    const appDetails = await AppConfig.getAppDetails({});
     return { appId: appDetails.appId, ownerId: appDetails.ownerId };
   }
 
@@ -160,21 +161,44 @@ async function resolveId (appIdOrName, orgaIdOrName, alias) {
       throw new Error('Application not found');
     }
 
-    if (orgaIdOrName.orga_id != null) {
+    const orgId = await Organisation.getId(orgaIdOrName);
+    if (orgId != null) {
       return {
         appId: appIdOrName.app_id,
-        ownerId: orgaIdOrName.orga_id,
-      };
-    }
-
-    if (orgaIdOrName.orga_name != null) {
-      return {
-        appId: appIdOrName.app_id,
-        ownerId: await Organisation.getId(orgaIdOrName),
+        ownerId: orgId,
       };
     }
 
     throw new Error('Application not found');
+  }
+
+  // -- resolve by app alias
+
+  // todo: this is a first implementation attempt
+  // question: is it a good idea to make resolution by alias a priority before resolution by name?
+  // maybe, there can be ambiguity between alias and app name:
+  // for instance: a linked app with alias "my_beloved_app", and another (non-linked) existing app with name "my_beloved_app"
+  // what should we do in that case?
+
+  const config = await loadApplicationConf();
+  const appByAlias = config.apps.find((a) => a.alias === appIdOrName.app_name);
+  if (appByAlias != null) {
+
+    // this implementation respects the assessment: if user provides an org, he knows what he is doing and we should respect its choice.
+    // todo: should we ignore the org option instead?
+
+    if (orgaIdOrName == null) {
+      return {
+        appId: appByAlias.app_id,
+        ownerId: appByAlias.org_id,
+      };
+    }
+
+    const orgId = await Organisation.getId(orgaIdOrName);
+    return {
+      appId: appByAlias.app_id,
+      ownerId: orgId,
+    };
   }
 
   // -- resolve by app name

@@ -5,9 +5,9 @@ const Logger = require('../logger.js');
 const openPage = require('open');
 
 async function openConsole (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
 
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   Logger.println('Opening the console in your browser');
 

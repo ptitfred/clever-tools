@@ -34,19 +34,19 @@ async function getByName (name) {
   return filteredOrgs[0];
 }
 
-async function resolveId (appIdOrName, orgIdOrName, alias) {
+async function resolveId (appIdOrName, orgIdOrName) {
   if (orgIdOrName != null) {
     return await getId(orgIdOrName);
   }
 
-  const { ownerId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { ownerId } = await Application.resolveId(appIdOrName, orgIdOrName);
   return ownerId;
 }
 
 async function getNamespaces (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
 
-  const ownerId = await resolveId(appIdOrName, orgIdOrName, alias);
+  const ownerId = await resolveId(appIdOrName, orgIdOrName);
 
   return organisation.getNamespaces({ id: ownerId }).then(sendToApi);
 }

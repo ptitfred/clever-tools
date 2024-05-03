@@ -8,8 +8,8 @@ const { toNameEqualsValueString, validateName } = require('@clevercloud/client/c
 const application = require('@clevercloud/client/cjs/api/v2/application.js');
 
 async function list (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const publishedConfigs = await application.getAllExposedEnvVars({ id: ownerId, appId }).then(sendToApi);
   const pairs = Object.entries(publishedConfigs)
@@ -21,14 +21,14 @@ async function list (params) {
 
 async function set (params) {
   const [varName, varValue] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
 
   const nameIsValid = validateName(varName);
   if (!nameIsValid) {
     throw new Error(`Published config name ${varName} is invalid`);
   }
 
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const publishedConfigs = await application.getAllExposedEnvVars({ id: ownerId, appId }).then(sendToApi);
   publishedConfigs[varName] = varValue;
@@ -39,8 +39,8 @@ async function set (params) {
 
 async function rm (params) {
   const [varName] = params.args;
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const publishedConfigs = await application.getAllExposedEnvVars({ id: ownerId, appId }).then(sendToApi);
   delete publishedConfigs[varName];
@@ -50,9 +50,9 @@ async function rm (params) {
 };
 
 async function importEnv (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName, json } = params.options;
+  const { app: appIdOrName, org: orgIdOrName, json } = params.options;
   const format = json ? 'json' : 'name-equals-value';
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   const publishedConfigs = await variables.readVariablesFromStdin(format);
   await application.updateAllExposedEnvVars({ id: ownerId, appId }, publishedConfigs).then(sendToApi);

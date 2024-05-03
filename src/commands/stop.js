@@ -6,8 +6,8 @@ const Logger = require('../logger.js');
 const { sendToApi } = require('../models/send-to-api.js');
 
 async function stop (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
 
   await application.undeploy({ id: ownerId, appId }).then(sendToApi);
   Logger.println('App successfully stopped!');

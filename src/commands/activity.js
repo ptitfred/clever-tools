@@ -85,8 +85,8 @@ function onEvent (previousEvent, newEvent) {
 }
 
 async function activity (params) {
-  const { alias, app: appIdOrName, org: orgIdOrName, 'show-all': showAll, follow } = params.options;
-  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName, alias);
+  const { app: appIdOrName, org: orgIdOrName, 'show-all': showAll, follow } = params.options;
+  const { ownerId, appId } = await Application.resolveId(appIdOrName, orgIdOrName);
   const events = await Activity.list(ownerId, appId, showAll);
   const reversedArrayWithIndex = events
     .reverse()
